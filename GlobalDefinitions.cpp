@@ -22,6 +22,11 @@ namespace globalType{
     double userKingX;
     double userKingY;
 
+    int windowWidth;
+    int windowHeight;
+
+    sf::RenderWindow *windowPtr;
+
     std::string communiquesArray[numberOfCommuniques][numberOfLanguages];
 
     Color menu;

@@ -2,130 +2,128 @@
 
 Game::Game()
 {
-    globalType::readConfigFile();
-    globalType::readCommuniqueFile();
+    readBackgroundTexture();
 }
-void Game::start()
+void Game::readBackgroundTexture()
 {
-    notice.setConsoleSize();
-    while(true)
-        gameMenu();
+    if (!backgroundTexture.loadFromFile("img/other/background.png")) {
+        std::cerr << "Failed to load texture!" << std::endl;
+    }
+    background.setTexture(backgroundTexture);
+    background.setPosition(0, 0);
+    background.setScale(globalType::windowPtr->getSize().x / background.getLocalBounds().width, globalType::windowPtr->getSize().y / background.getLocalBounds().height);
 }
-    void Game::gameMenu()
+void Game::run()
 {
-    try
+    while (globalType::windowPtr->isOpen())
     {
-        switch(notice.checkbox(globalType::getCommuniqueCotent({0,1,2,3})))
-        {
-            case 1:  userPiecesColorMenu();         break;
-            case 2:  colorfullElementSettingMenu(); break;
-            case 3:  languageSettingMenu();         break;
-            case 4:  exitService();                 exit(0);
-            default: throw std::runtime_error("Option selection error.");
+        mainMenuAction = mainMenu();
+        if(mainMenuAction == playWhiteColor)
+            Play(1).playWithUser();
+        if(mainMenuAction == playBlackColor)
+            Play(0).playWithUser();
+        if(mainMenuAction == exit)
+            break;
+    }
+}
+Game::MainMenuAction Game::mainMenu()
+{
+    sf::Texture buttonTexture[4];
+    sf::Sprite button[4];
+    loadMainMenuButtons(buttonTexture, button);
+    locateMainMenuButtons(buttonTexture, button);
+    sf::Color originalColor = button[0].getColor();
+    sf::Color darkColor = sf::Color(150, 150, 150);
+
+    while (globalType::windowPtr->isOpen()) {
+        checkWindowSize();
+        sf::Event event;
+        while (globalType::windowPtr->pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+            {
+                //globalType::windowPtr->close();
+                return MainMenuAction::exit;
+            }
+            if (event.type == sf::Event::MouseMoved)
+                updateMainMenuButtons(button, originalColor, darkColor);
+            if (event.type == sf::Event::MouseButtonPressed) {
+                for (int i = 0; i < 4; i++) {
+                    sf::FloatRect buttonBounds = button[i].getGlobalBounds();
+                    if (buttonBounds.contains(sf::Vector2f(event.mouseButton.x, event.mouseButton.y))) {
+                        if(i == 2)
+                            return static_cast<MainMenuAction>(randomColor());
+                        else
+                            return static_cast<MainMenuAction>(i);
+                    }
+                }
+            }
+        }
+        drawMainMenu(button);
+    }
+}
+void Game::loadMainMenuButtons(sf::Texture buttonTexture[], sf::Sprite button[])
+{
+    if (!buttonTexture[0].loadFromFile("img/buttons/playWhiteButton.png"))
+        {}//return EXIT_FAILURE;
+    button[0].setTexture(buttonTexture[0]);
+    if (!buttonTexture[1].loadFromFile("img/buttons/playBlackButton.png"))
+        {}//return EXIT_FAILURE;
+    button[1].setTexture(buttonTexture[1]);
+    if (!buttonTexture[2].loadFromFile("img/buttons/playRandomColorButton.png"))
+        {}//return EXIT_FAILURE;
+    button[2].setTexture(buttonTexture[2]);
+    if (!buttonTexture[3].loadFromFile("img/buttons/exitButton.png"))
+        {}//return EXIT_FAILURE;
+    button[3].setTexture(buttonTexture[3]);
+}
+void Game::locateMainMenuButtons(sf::Texture buttonTexture[], sf::Sprite button[])
+{
+    float windowWidth  = static_cast<float>(globalType::windowPtr->getSize().x);
+    float windowHeight = static_cast<float>(globalType::windowPtr->getSize().y);
+    float buttonWidth  = 250.0f;
+    float buttonHeight =  50.0f;
+    float buttonsSpace =  50.0f;
+    float allButtosHeight = 4.0f * buttonHeight + 3.0f * buttonsSpace;
+    float buttonXPosition = windowWidth / 2.0f - buttonWidth / 2.0f;
+    float allButtosYPosition = windowHeight / 2.0f - allButtosHeight / 2.0f;
+    float buttonXScale = buttonWidth  / buttonTexture[0].getSize().x * static_cast<float>(globalType::windowWidth)  / windowWidth;
+    float buttonYScale = buttonHeight / buttonTexture[0].getSize().y * static_cast<float>(globalType::windowHeight) / windowHeight;
+
+    for(int i=0; i<4; i++)
+    {
+        button[i].setPosition(buttonXPosition, allButtosYPosition + i * (buttonHeight + buttonsSpace));
+        button[i].setScale(buttonXScale, buttonYScale);
+    }
+}
+void Game::checkWindowSize()
+{
+    sf::Vector2u windowSize = globalType::windowPtr->getSize();
+    if (windowSize.x != globalType::windowWidth || windowSize.y != globalType::windowHeight) {
+        globalType::windowPtr->setSize({globalType::windowWidth, globalType::windowHeight});
+    }
+}
+void Game::updateMainMenuButtons(sf::Sprite button[], sf::Color originalColor, sf::Color darkColor)
+{
+    for (int i = 0; i < 4; i++) {
+        sf::FloatRect buttonBounds = button[i].getGlobalBounds();
+        if (buttonBounds.contains(sf::Mouse::getPosition(*(globalType::windowPtr)).x, sf::Mouse::getPosition(*(globalType::windowPtr)).y)) {
+            button[i].setColor(darkColor);
+        } else {
+            button[i].setColor(originalColor);
         }
     }
-    catch(const std::runtime_error &e)
-    {
-        globalType::errorType x;
-        x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
-        throw x;
-    }
 }
-        void Game::userPiecesColorMenu()
+void Game::drawMainMenu(sf::Sprite button[])
 {
-    try
-    {
-        switch(notice.checkbox(globalType::getCommuniqueCotent({9,10,11,34})))
-       {
-           case 1:  pastFirstPlay = true;  Play(1).playWithUser();              break;
-           case 2:  pastFirstPlay = true;  Play(0).playWithUser();              break;
-           case 3:  pastFirstPlay = true;  Play(randomColor()).playWithUser();  break;
-           case 4:                                                              break;
-           default: throw std::runtime_error("Option selection error.");
-       }
+    globalType::windowPtr->clear();
+    globalType::windowPtr->draw(background);
+    for (int i = 0; i < 4; i++) {
+        globalType::windowPtr->draw(button[i]);
     }
-    catch(const std::runtime_error &e)
-    {
-        globalType::errorType x;
-        x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
-        throw x;
-    }
+    globalType::windowPtr->display();
 }
-            int Game::randomColor()noexcept
+int Game::randomColor()noexcept
 {
     srand(static_cast<unsigned int>(time(nullptr)));
     return rand() % 2;
-}
-        void Game::colorfullElementSettingMenu()
-{
-    try
-    {
-        switch(notice.checkbox(globalType::getCommuniqueCotent({4,5,6,7,8})))
-        {
-            case 1:  colorSettingMenu(globalType::underlightedSquare);  break;
-            case 2:  colorSettingMenu(globalType::menu);                break;
-            case 3:  colorSettingMenu(globalType::chsenOption);         break;
-            case 4:  colorSettingMenu(globalType::notation);            break;
-            case 5:  break;
-            default: throw std::runtime_error("Option selection error.");
-        }
-    }
-    catch(const std::runtime_error &e)
-    {
-        globalType::errorType x;
-        x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
-        throw x;
-    }
-    chessboard.deleteCheckbox(293, 63, pastFirstPlay);
-}
-            void Game::colorSettingMenu(globalType::Color &color)
-{
-    chessboard.deleteCheckbox(293, 63, pastFirstPlay);
-    try
-    {
-        switch(notice.checkbox(globalType::getCommuniqueCotent({12,13,14,15,8})))
-        {
-            case 1:  color = static_cast<globalType::Color>(1); break;
-            case 2:  color = static_cast<globalType::Color>(2); break;
-            case 3:  color = static_cast<globalType::Color>(3); break;
-            case 4:  color = static_cast<globalType::Color>(4); break;
-            case 5:  break;
-            default: throw std::runtime_error("Option selection error.");
-        }
-    }
-    catch(const std::runtime_error &e)
-    {
-        globalType::errorType x;
-        x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
-        throw x;
-    }
-    globalType::writeConfigFile();
-}
-        void Game::languageSettingMenu()
-{
-    chessboard.deleteCheckbox(220, 53, pastFirstPlay);
-    try
-    {
-        switch(notice.checkbox(globalType::getCommuniqueCotent({16,17,35})))
-       {
-           case 1:  globalType::setLanguage = globalType::polish;  break;
-           case 2:  globalType::setLanguage = globalType::english; break;
-           case 3:  break;
-           default: throw std::runtime_error("Option selection error.");
-       }
-    }
-    catch(const std::runtime_error &e)
-    {
-        globalType::errorType x;
-        x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
-        throw x;
-    }
-    globalType::writeConfigFile();
-}
-        void Game::exitService()
-{
-    chessboard.deleteCheckbox(220, 53, pastFirstPlay);
-    notice.communique(globalType::getCommuniqueCotent({18})[0],1);
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    systemInfo::setCursorPosition(0, globalType::chessboardHeight);
 }

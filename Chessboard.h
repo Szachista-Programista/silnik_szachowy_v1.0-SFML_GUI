@@ -1,35 +1,65 @@
 #ifndef CHESSBOARD_H
 #define CHESSBOARD_H
 #include "GlobalDefinitions.h"
+
 /**
- * @brief The Chessboard class represents a chessboard for displaying and managing
- * the game state. 
- * 
- * This class is responsible for displaying the chessboard on the console,
- * refreshing the board within specified pixel ranges, loading the board state
- * from a text file, drawing and erasing pieces on the board squares,
- * and highlighting selected squares for moves.
+ * @brief
  */
 class Chessboard{
+
+public:////////////////////////////////
     bool color;
-    char chessboardArray[globalType::chessboardHeight][globalType::chessboardwidth];
-    std::string piecesArray[globalType::numberOfPieces];
+    
+    float windowHeight;
+    float windowWidth;
+    float boardSize;
+    float marginSize;
+    float squareSize;
+    float squareScale;
+
+
+
+
+
+    sf::Texture backgroundTexture;
+    sf::Sprite  background;
+    sf::Texture boardTexture;
+    sf::Sprite  board;
+    sf::Texture redUnderlightTexture;
+    sf::Sprite  redUnderlight;
+    sf::Texture blueUnderlightTexture;
+    sf::Sprite  blueUnderlight;
+    sf::Texture pieceTextures[12];
+    sf::Sprite  piece;
+
+    globalType::chessboardPointer chessboard;
+    bool underlightArray[8][8]{0};
 //******************************************************************************************************
-public: Chessboard(bool k = true);
-private:    void loadPiecesArray();
-            void loadChessboardArray();
-                void loadChessboard()noexcept;
-                void loadCoodinates();
-                    void loadSingeCoordinateChar(int coordX, int coordY, std::string cHar);
-                void loadPieces();
-                    globalType::chessboardPointer loadPiecesArrangement();
-                    void loadSinglePiece(int squareCoordX, int squareCoordY, int piece, bool pieceColor, bool underlight = 0);
-public: void deleteCommunique(int communiqueWidth);
-        void deleteCheckbox(int Width, int Height, bool deleteByChessboardWrite = true);
-        void writeChessboardArray();
-        void updateSquare  (int squareCoordX, int squareCoordY, int piece, bool pieceColor, bool underlight);
-private:    void writePiece(int squareCoordX, int squareCoordY, bool underlight);
-                void refreshChessboardPartially(int fromX, int fromY, int toX, int toY);
+    Chessboard(bool k = true);
+        void readTextures();
+            void readBackgroundTexture();
+            void readBoardTexture();
+            void readPieceTextures();
+            void readUnderlightTextures();
+        globalType::chessboardPointer loadPiecesArrangement();
+        globalType::chessboardPointer reversePiecesArrangement(globalType::chessboardPointer chessboard);
+    ~Chessboard();
+    int loadCoordinates();
+    int drawChessboard(bool underlightedCursor);
+        void drawUnderlight();
+        void underlightCursorSquare();
+        void drawPieces();
+        int  getCursorCoords();
+    void updateSquare  (int squareCoordX, int squareCoordY, int piece, bool pieceColor, bool underlight);
+        void updateChessboard(int squareCoordX, int squareCoordY, int piece, bool pieceColor);
+        void updateUnderlightArray(int squareCoordX, int squareCoordY, bool underlight);
+    void checkWindowSize();
+
+
+
+
+
+
 //******************************************************************************************************
     enum Pieces{
         no,
@@ -40,14 +70,6 @@ private:    void writePiece(int squareCoordX, int squareCoordY, bool underlight)
         queen,
         king
     };
-    enum Dimensions{
-        topMargin    = 12,
-        sideMargin   = 24,
-        squareHeight = 19,
-        squareWidth  = 46
-    };
-    enum Values{
-        numberOfCoordinatesChars = 16
-    };
+
 };
 #endif//CHESSBOARD_H

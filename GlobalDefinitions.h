@@ -1,5 +1,6 @@
 #ifndef GLOBAL_DEFINITIONS_H
 #define GLOBAL_DEFINITIONS_H
+#include <SFML/Graphics.hpp>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -45,6 +46,11 @@ namespace globalType{
 
     extern double userKingX;
     extern double userKingY;
+
+    extern int windowWidth;
+    extern int windowHeight;
+
+    extern sf::RenderWindow *windowPtr;
 
     enum{
         numberOfLanguages      = 2,
