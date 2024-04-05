@@ -102,6 +102,7 @@ namespace globalType{
     };
 
     using chessboardPointer = char(*)[8];
+    using chessboardUnderlightPointer = bool(*)[8];
     struct errorType{std::string errorMessage;};
     extern std::string communiquesArray[][numberOfLanguages];
 

@@ -10,40 +10,31 @@
  */
 class Play{
     bool color;
-    bool engineMoveUnderlighted;
-    bool correcSquareChosen;
     bool correctMovementMade;
-
+    bool firstCoordChoosen;
     int engineMoveCode;
     int userMoveCode;
-    int userSquareChosenCoordinates;
-    int promotionCode;
+    int chosenCoordinates;
 
     Notice     notice;
     Chessboard chessboard;
     Engine     engine;
     Notebook   notebook;
 
-    std::string currentChessboardUpdateCode;
-    std::string previousChessboardUpdateCode;
-    std::string SquareUpdateCode;
 //********************************************************************************
 public: Play(bool k)noexcept;
         void playWithUser();
-private:    bool userMoveServive();
-                int loadCoordinates();
-                    bool endgameMenu(char cHar);
-                        void colorfullElementSettingMenu();
-                            void colorSettingMenu(globalType::Color &color);
-                std::string generateSquareUpdateCode()noexcept;
-                void updateChessboard(std::string updateCode, bool underlight);
-                    int  getPieceCode (char cHar);
-                    bool getPieceColor(char cHar);
-                void offPreviousEngineMoveUnderlight();
+private:    bool userMoveService();
                 bool isChosenUserPiece();
-                bool isUserMakesPromotion()noexcept;
-            bool engineMoveServive(int moveCode);
+                void firstCoordService();
+                void secondCoordService();
+                    bool isUserMakesPromotion()noexcept;      
+                        void updateChessboard(std::string updateCode, bool underlight);
+                            int  getPieceCode (char cHar);
+                            bool getPieceColor(char cHar);                              
+            bool engineMoveService(int moveCode);
                 bool isItGameover();
-            void notationSavingMenu();
+
+
 };
 #endif//PLAY_H

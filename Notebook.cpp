@@ -102,12 +102,12 @@ Notebook::~Notebook()noexcept
     delete[]currentChessboard;
     delete[]previousChessboard;
 }
-void Notebook::generateAndWriteNotation  (int moveCode)
+std::vector<std::string> Notebook::getNotation  (int moveCode)
 {
     updateParameterValues(moveCode);
     markMoveAndWriteNotation();
     updateEntireNotation();
-    writeNotation();
+    return entireSingleNotation;
 }
     void Notebook::updateParameterValues (int moveCode)
 {
@@ -468,25 +468,35 @@ void Notebook::generateAndWriteNotation  (int moveCode)
 }
     void Notebook::updateEntireNotation()
 {
-    std::ostringstream note;
+    std::ostringstream doubleNote;
+    std::ostringstream singleNote;
     if(gameOver)
         endgameService();
     if(semiMoveNumber % 2)
     {
-        note<<std::right<<std::setw(3)<<moveNumber<<". "<<std::left<<std::setw(8)<<lastMoveNotation;
+        doubleNote<<std::right<<std::setw(3)<<moveNumber<<". "<<std::left<<std::setw(8)<<lastMoveNotation;
+        singleNote<<std::left<<std::setw(8)<<lastMoveNotation;
         if(gameOverParameter == 3 || gameOverParameter == 4)
-            note<<std::left<<std::setw(7)<<gameResult;
-        entireNotation.push_back(note.str());
+        {
+            doubleNote<<std::left<<std::setw(7)<<gameResult;
+            singleNote<<std::left<<std::setw(8)<<gameResult;
+        }
+        entireDoubleNotation.push_back(doubleNote.str());
+        entireSingleNotation.push_back(singleNote.str());
     }
     else
     {
-        note<<std::left<<std::setw(7)<<lastMoveNotation;
-        entireNotation[moveNumber-1] += note.str();
+        doubleNote<<std::left<<std::setw(7)<<lastMoveNotation;
+        singleNote<<std::left<<std::setw(8)<<lastMoveNotation;
+        entireDoubleNotation[moveNumber-1] += doubleNote.str();
+        entireSingleNotation.push_back(singleNote.str());
         if(gameOverParameter == 3 || gameOverParameter == 4)
         {
-            note.str("");
-            note<<std::right<<std::setw(3)<<moveNumber + 1<<". "<<std::left<<std::setw(8)<<gameResult;
-            entireNotation.push_back(note.str());
+            doubleNote.str("");
+            doubleNote<<std::right<<std::setw(3)<<moveNumber + 1<<". "<<std::left<<std::setw(8)<<gameResult;
+            singleNote<<std::left<<std::setw(8)<<gameResult;
+            entireDoubleNotation.push_back(doubleNote.str());
+            entireSingleNotation.push_back(singleNote.str());
         }
     }
 }
@@ -521,11 +531,15 @@ void Notebook::generateAndWriteNotation  (int moveCode)
 }
             void Notebook::replacePlusWithHashtag()
 {
-    int index_edytowanego_stringa = moveNumber - ((semiMoveNumber % 2)? 2: 1);
-    int plusIndex = entireNotation[index_edytowanego_stringa].rfind('+');
+    int doubleNotationEditingStringIndex = moveNumber - ((semiMoveNumber % 2)? 2: 1);
+    int singleNotationEditingStringIndex = semiMoveNumber - 2;
+    int doubleNotationplusIndex = entireDoubleNotation[doubleNotationEditingStringIndex].rfind('+');
+    int singleNotationplusIndex = entireSingleNotation[singleNotationEditingStringIndex].rfind('+');
     try
     {
-        if (plusIndex == std::string::npos)
+        if (doubleNotationplusIndex == std::string::npos)
+            throw std::runtime_error("The '+' sign was not found in the edited text fragment.");
+        if (singleNotationplusIndex == std::string::npos)
             throw std::runtime_error("The '+' sign was not found in the edited text fragment.");
     }
     catch(const std::runtime_error &e)
@@ -534,259 +548,8 @@ void Notebook::generateAndWriteNotation  (int moveCode)
         x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
         throw x;
     }
-    entireNotation[index_edytowanego_stringa][plusIndex] = '#';
-}
-    void Notebook::writeNotation()
-{
-    clearNotationArray();
-    if(semiMoveNumber%2)
-        writePreviousNotation(previousNotationLine, previousNotationColumn);
-    addNotationArrayContent(entireNotation[moveNumber-1]);
-    writeNotationArray(currentNotationLine, currentNotationColumn, true);
-    if(!(semiMoveNumber%2))
-    {
-        rewriteNotationToColumn();
-        previousNotationColumn = currentNotationColumn;
-        previousNotationLine  = currentNotationLine;
-        if(currentNotationLine < 15)
-            currentNotationLine++;
-        else
-        {
-            currentNotationLine = 0;
-            currentNotationColumn++;
-            if(currentNotationColumn == 3)
-                undoNotationColumns();
-        }
-        if(gameOverParameter == 3 || gameOverParameter == 4)
-        {
-            gameOverParameter = 0;
-            semiMoveNumber++;
-            moveNumber = (semiMoveNumber+1)/2;
-            writeNotation();
-        }
-    }
-}
-        void Notebook::clearNotationArray()noexcept
-{
-    for(int i=0; i<globalType::letterHeight; i++)
-        notationArray[i].clear();
-}
-        void Notebook::writePreviousNotation(int line, int column)
-{
-    try
-    {
-        if(column<0 || 2<column)
-            throw std::invalid_argument("Wrong column.");
-        if(line<0 || 16<line)
-            throw std::invalid_argument("Wrong line.");
-    }
-    catch(const std::invalid_argument &e)
-    {
-        globalType::errorType x;
-        x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
-        throw x;
-    }
-    if(gameOverParameter == 1)
-    {
-        addNotationArrayContent(entireNotation[moveNumber-2]);
-        writeNotationArray(line, column, false);
-        clearNotationArray();
-        return;
-    }
-    int x = globalType::chessboardwidth + column*globalType::columnWidth;
-    int y = line * globalType::notationLineHeight;
-    for(int i=0; i<globalType::letterHeight; i++)
-    {
-        systemInfo::setCursorPosition(x, y+i);
-        std::cout<<notationColumnArray[previousNotationColumn][y+i];
-    }
-}
-        void Notebook::undoNotationColumns()
-{
-    copyNotationColumnArray(0, 1);
-    copyNotationColumnArray(1, 2);
-    emptyNotationColumnArray(2);
-    writeNotationColumn(0);
-    writeNotationColumn(1);
-    clearNotationColumn(2);
-    previousNotationColumn--;
-    currentNotationColumn--;
-}
-            void Notebook::copyNotationColumnArray(int copyIndex, int patternIndex)
-{
-    try
-    {
-        if(copyIndex<0 || 1<copyIndex)
-            throw std::invalid_argument("Wrong copyIndex.");
-        if(patternIndex<1 || 2<patternIndex)
-            throw std::invalid_argument("Wrong patternIndex.");
-    }
-    catch(const std::invalid_argument &e)
-    {
-        globalType::errorType x;
-        x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
-        throw x;
-    }
-    for(int i=0; i<globalType::columnHeight; i++)
-        notationColumnArray[copyIndex][i] = notationColumnArray[patternIndex][i];
-}
-            void Notebook::emptyNotationColumnArray(int columnNumber)
-{
-    try
-    {
-        if(columnNumber<0 || 2<columnNumber)
-            throw std::invalid_argument("Wrong column.");
-    }
-    catch(const std::invalid_argument &e)
-    {
-        globalType::errorType x;
-        x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
-        throw x;
-    }
-    for(int i=0; i<globalType::columnHeight; i++)
-        notationColumnArray[columnNumber][i].clear();
-}
-            void Notebook::writeNotationColumn(int columnNumber)
-{
-    try
-    {
-        if(columnNumber<0 || 2<columnNumber)
-            throw std::invalid_argument("Wrong column.");
-    }
-    catch(const std::invalid_argument &e)
-    {
-        globalType::errorType x;
-        x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
-        throw x;
-    }
-    int x = globalType::chessboardwidth + columnNumber*globalType::columnWidth;
-    for(int i=0; i<globalType::columnHeight; i++)
-    {
-        if(columnNumber == 1 && 164 < i)
-            systemInfo::setConsoleColor(globalType::notation);
-        systemInfo::setCursorPosition(x, i);
-        std::cout<<notationColumnArray[columnNumber][i];
-    }
-    systemInfo::setConsoleColor(globalType::white);
-}
-            void Notebook::clearNotationColumn(int columnNumber)
-{
-    try
-    {
-        if(columnNumber<0 || 2<columnNumber)
-            throw std::invalid_argument("Wrong column.");
-    }
-    catch(const std::invalid_argument &e)
-    {
-        globalType::errorType x;
-        x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
-        throw x;
-    }
-    int x = globalType::chessboardwidth + columnNumber*globalType::columnWidth;
-    for(int i=0; i<globalType::columnHeight; i++)
-    {
-        systemInfo::setCursorPosition(x, i);
-        std::cout<<std::string(globalType::columnWidth, ' ');
-    }
-}
-        void Notebook::addNotationArrayContent(std::string content)
-{
-    for(auto& cHar: content)
-    {
-        addCharToNotationArray(cHar);
-        for(int i=0; i<globalType::letterHeight; i++)
-            notationArray[i] += ' ';
-    }
-}
-            void Notebook::addCharToNotationArray(char cHar)
-{
-    int charIndex = getCharIndex(cHar);
-    int charWidth = pixelArtCharacterArray[charIndex][0].size();
-    try
-    {
-        for(int i=0; i<globalType::letterHeight; i++)
-            for(int j=0; j<charWidth; j++)
-                switch(pixelArtCharacterArray[charIndex][i][j])
-                {
-                    case ' ': notationArray[i] += ' '   ; break;
-                    case 'X': notationArray[i] += '\333'; break;
-                    case 'D': notationArray[i] += '\334'; break;
-                    case 'G': notationArray[i] += '\337'; break;
-                    default : throw std::runtime_error("Error in 'chars.txt' file content.");
-                }
-    }
-    catch(const std::runtime_error &e)
-    {
-        globalType::errorType x;
-        x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
-        throw x;
-    }
-}
-                int Notebook::getCharIndex(char cHar)
-{
-    if('A'<=cHar && cHar<='Z')
-        return cHar-65;
-    if('a'<=cHar && cHar<='z')
-        return cHar-71;
-    if('0'<=cHar && cHar<='9')
-        return cHar+4;
-    try
-    {
-        switch(cHar)
-        {
-            case '.': return 62;
-            case '+': return 63;
-            case '-': return 64;
-            case '=': return 65;
-            case '#': return 66;
-            case ' ': return 67;
-            case '/': return 68;
-            case '!': return 69;
-            case '?': return 70;
-            case '"': return 71;
-            case ':': return 72;
-            case ';': return 73;
-            default: throw std::runtime_error("Wrong char.");
-        }
-    }
-    catch(const std::runtime_error &e)
-    {
-        globalType::errorType x;
-        x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
-        throw x;
-    }
-}
-        void Notebook::writeNotationArray(int line, int column, bool backlight)
-{
-    try
-    {
-        if(column<0 || 2<column)
-            throw std::invalid_argument("Wrong column.");
-        if(line<0 || 16<line)
-            throw std::invalid_argument("Wrong line.");
-    }
-    catch(const std::invalid_argument &e)
-    {
-        globalType::errorType x;
-        x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
-        throw x;
-    }
-    int x = globalType::chessboardwidth + column*globalType::columnWidth;
-    int y = line * globalType::notationLineHeight;
-    if(backlight)
-        systemInfo::setConsoleColor(globalType::notation);
-    for(int i=0; i<globalType::letterHeight; i++)
-    {
-        systemInfo::setCursorPosition(x, y+i);
-        std::cout<<notationArray[i];
-    }
-    if(backlight)
-        systemInfo::setConsoleColor(globalType::white);
-}
-        void Notebook::rewriteNotationToColumn()noexcept
-{
-    for(int i=0; i<globalType::letterHeight; i++)
-        notationColumnArray[currentNotationColumn][currentNotationLine * globalType::notationLineHeight + i] = notationArray[i];
+    entireDoubleNotation[doubleNotationEditingStringIndex][doubleNotationplusIndex] = '#';
+    entireSingleNotation[singleNotationEditingStringIndex][singleNotationplusIndex] = '#';
 }
 std::string Notebook::getChessboardUpdateCode()noexcept
 {
@@ -825,7 +588,7 @@ std::string Notebook::saveGameInNotebook()
     }
     file<<std::put_time(localtime(&moment_t), ">>> %Y-%m-%d %H:%M:%S <<<")<<std::endl;
     file<<"==========================="<<std::endl;
-    for(auto& line: entireNotation)
+    for(auto& line: entireDoubleNotation)
     file<<line<<std::endl;
     file.close();
     return "\"" + fileName + "\"";

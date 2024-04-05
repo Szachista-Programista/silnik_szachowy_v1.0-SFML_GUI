@@ -2,6 +2,8 @@
 
 Game::Game()
 {
+    globalType::readConfigFile();
+    globalType::readCommuniqueFile();
     readBackgroundTexture();
 }
 void Game::readBackgroundTexture()
@@ -35,21 +37,25 @@ Game::MainMenuAction Game::mainMenu()
     sf::Color originalColor = button[0].getColor();
     sf::Color darkColor = sf::Color(150, 150, 150);
 
-    while (globalType::windowPtr->isOpen()) {
+    while (globalType::windowPtr->isOpen())
+    {
         checkWindowSize();
         sf::Event event;
-        while (globalType::windowPtr->pollEvent(event)) {
+        while (globalType::windowPtr->pollEvent(event))
+        {
             if (event.type == sf::Event::Closed)
             {
-                //globalType::windowPtr->close();
-                return MainMenuAction::exit;
+                globalType::windowPtr->close();
+                //return MainMenuAction::exit;
             }
             if (event.type == sf::Event::MouseMoved)
                 updateMainMenuButtons(button, originalColor, darkColor);
             if (event.type == sf::Event::MouseButtonPressed) {
-                for (int i = 0; i < 4; i++) {
+                for (int i = 0; i < 4; i++)
+                {
                     sf::FloatRect buttonBounds = button[i].getGlobalBounds();
-                    if (buttonBounds.contains(sf::Vector2f(event.mouseButton.x, event.mouseButton.y))) {
+                    if (buttonBounds.contains(sf::Vector2f(event.mouseButton.x, event.mouseButton.y)))
+                    {
                         if(i == 2)
                             return static_cast<MainMenuAction>(randomColor());
                         else
@@ -88,7 +94,6 @@ void Game::locateMainMenuButtons(sf::Texture buttonTexture[], sf::Sprite button[
     float allButtosYPosition = windowHeight / 2.0f - allButtosHeight / 2.0f;
     float buttonXScale = buttonWidth  / buttonTexture[0].getSize().x * static_cast<float>(globalType::windowWidth)  / windowWidth;
     float buttonYScale = buttonHeight / buttonTexture[0].getSize().y * static_cast<float>(globalType::windowHeight) / windowHeight;
-
     for(int i=0; i<4; i++)
     {
         button[i].setPosition(buttonXPosition, allButtosYPosition + i * (buttonHeight + buttonsSpace));
@@ -117,9 +122,8 @@ void Game::drawMainMenu(sf::Sprite button[])
 {
     globalType::windowPtr->clear();
     globalType::windowPtr->draw(background);
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++)
         globalType::windowPtr->draw(button[i]);
-    }
     globalType::windowPtr->display();
 }
 int Game::randomColor()noexcept

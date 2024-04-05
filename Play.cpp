@@ -3,69 +3,77 @@
 Play::Play(bool k)noexcept:
 color{k}, chessboard{k}, engine{k}, notebook{k}
 {
-    chessboard.drawChessboard(0);
+    chessboard.drawChessboard();
 }
 void Play::playWithUser()
 {
     if(color == false) //engine starts the game
-        engineMoveServive(10000);
-    while(userMoveServive() && engineMoveServive(userMoveCode)){}
-    notationSavingMenu();
+        engineMoveService(10000);
+    while(userMoveService() && engineMoveService(userMoveCode)){}
 }
-    bool Play::userMoveServive()
+    bool Play::userMoveService()
 {
+    firstCoordChoosen = false;
     while(true)
     {
-        userMoveCode = userSquareChosenCoordinates = chessboard.loadCoordinates();
-        currentChessboardUpdateCode = SquareUpdateCode = generateSquareUpdateCode();
-        offPreviousEngineMoveUnderlight();
-        correcSquareChosen = isChosenUserPiece();
-
-        
-        updateChessboard(SquareUpdateCode, true);
-        if(!correcSquareChosen)
+        if(!firstCoordChoosen)
         {
-            updateChessboard(SquareUpdateCode, false);
-            continue;
+            chosenCoordinates = chessboard.loadCoordinates();
+            if(isChosenUserPiece())
+                firstCoordService();
         }
-        if(correcSquareChosen)
+        else
         {
-            userSquareChosenCoordinates = chessboard.loadCoordinates();
-            userMoveCode = userMoveCode*100 + userSquareChosenCoordinates;
-            currentChessboardUpdateCode += SquareUpdateCode = generateSquareUpdateCode();
-            correctMovementMade = engine.canUserMakeSuchMove(userMoveCode);
-            updateChessboard(SquareUpdateCode, true);
-            if(!correctMovementMade)
+            chosenCoordinates = chessboard.loadCoordinates();
+            if(isChosenUserPiece())
+                firstCoordService();
+            else
             {
-                updateChessboard(currentChessboardUpdateCode, false);
-                continue;
-            }
-            if(correctMovementMade)
-            {
-                if(isUserMakesPromotion())
+                userMoveCode = userMoveCode*100 + chosenCoordinates;
+                if(engine.canUserMakeSuchMove(userMoveCode))
                 {
-                    std::vector<std::string> promotionOptions = globalType::getCommuniqueCotent({30,31,32,33});
-                    //promotionCode = notice.checkbox(promotionOptions)*10000;
-                    //chessboard.deleteCheckbox(220, 60);
-                    userMoveCode += promotionCode;
+                    secondCoordService();
+                    return true;
                 }
-                notebook.generateAndWriteNotation(userMoveCode);
-                currentChessboardUpdateCode = notebook.getChessboardUpdateCode();
-                updateChessboard(currentChessboardUpdateCode, true);
-                previousChessboardUpdateCode = currentChessboardUpdateCode;
-                return true;
+                else
+                {
+                    chessboard.offUnderlights();
+                    firstCoordChoosen = false;
+                }
             }
         }
     }
 }
-        std::string Play::generateSquareUpdateCode()noexcept
+        bool Play::isChosenUserPiece()
 {
-    int x     = userSquareChosenCoordinates / 10;
-    int y     = userSquareChosenCoordinates % 10;
-    char cHar = notebook.currentChessboard[y][x];
-    return std::to_string(x) + std::to_string(y) + cHar;
+    int x      = chosenCoordinates / 10;
+    int y      = chosenCoordinates % 10;
+    char piece = notebook.currentChessboard[y][x];
+    return (getPieceColor(piece) == color);
 }
-        void Play::updateChessboard(std::string updateCode, bool underlight)
+        void Play::firstCoordService()
+{
+    chessboard.offUnderlights();
+    chessboard.underlight(chosenCoordinates);
+    userMoveCode = chosenCoordinates;
+    firstCoordChoosen = true;
+}
+        void Play::secondCoordService()
+{
+    if(isUserMakesPromotion())
+        userMoveCode += chessboard.promotionMenu() * 10000;
+    chessboard.notation = notebook.getNotation(userMoveCode);
+    updateChessboard(notebook.getChessboardUpdateCode(), true);
+    chessboard.drawChessboard();
+}
+            bool Play::isUserMakesPromotion()noexcept
+{
+    int fromX =  userMoveCode/1000;
+    int fromY = (userMoveCode/ 100)%10;
+    int toY   =  userMoveCode      %10;
+    return (notebook.currentChessboard[fromY][fromX] == 'p' && toY == 7);
+}
+            void Play::updateChessboard(std::string updateCode, bool underlight)
 {
     try
     {
@@ -95,8 +103,10 @@ void Play::playWithUser()
         pieceColor = getPieceColor(cHar);
         chessboard.updateSquare(x, y, piece, pieceColor, underlight);
     }
+    chessboard.savePosition();
+    //chessboard.drawChessboard(1);
 }
-            int Play::getPieceCode  (char cHar)
+                int Play::getPieceCode  (char cHar)
 {
     try
     {
@@ -119,7 +129,7 @@ void Play::playWithUser()
         throw x;
     }
 }
-            bool Play::getPieceColor(char cHar)
+                bool Play::getPieceColor(char cHar)
 {
     try
     {
@@ -142,37 +152,12 @@ void Play::playWithUser()
         throw x;
     }
 }
-        void Play::offPreviousEngineMoveUnderlight()
-{
-    if(engineMoveUnderlighted == true)
-    {
-        updateChessboard(previousChessboardUpdateCode, false);
-        engineMoveUnderlighted = false;
-    }
-}
-        bool Play::isChosenUserPiece()
-{
-    int x      = userSquareChosenCoordinates / 10;
-    int y      = userSquareChosenCoordinates % 10;
-    char piece = notebook.currentChessboard[y][x];
-    return (getPieceColor(piece) == color);
-}
-        bool Play::isUserMakesPromotion()noexcept
-{
-    int fromX =  userMoveCode/1000;
-    int fromY = (userMoveCode/ 100)%10;
-    int toY   =  userMoveCode      %10;
-    return (notebook.currentChessboard[fromY][fromX] == 'p' && toY == 7);
-}
-    bool Play::engineMoveServive(int moveCode)
+    bool Play::engineMoveService(int moveCode)
 {
     engineMoveCode = engine.makeMove(moveCode);
-    notebook.generateAndWriteNotation(engineMoveCode);
-    currentChessboardUpdateCode = notebook.getChessboardUpdateCode();
-    updateChessboard(previousChessboardUpdateCode, false);
-    updateChessboard(currentChessboardUpdateCode, true);
-    engineMoveUnderlighted = true;
-    previousChessboardUpdateCode = currentChessboardUpdateCode;
+    chessboard.notation = notebook.getNotation(engineMoveCode);
+    chessboard.offUnderlights();
+    updateChessboard(notebook.getChessboardUpdateCode(), true);
     return ( ! isItGameover());
 }
         bool Play::isItGameover()
@@ -206,33 +191,5 @@ void Play::playWithUser()
         x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
         throw x;
     }
-    //chessboard.deleteCommunique(300);
     return true;
-}
-    void Play::notationSavingMenu()
-{
-    //notice.communique(globalType::getCommuniqueCotent({26})[0]);
-    //chessboard.deleteCommunique(415);
-    try
-    {
-        switch(notice.checkbox(globalType::getCommuniqueCotent({27,28})))
-        {
-           case 1:
-               //chessboard.deleteCheckbox(210, 33, true);
-               //notice.communique(globalType::getCommuniqueCotent({43})[0], 700);
-               //notice.communique(notebook.saveGameInNotebook(), 1400);
-               //chessboard.deleteCommunique(320);
-               break;
-           case 2:  break;
-           default: throw std::runtime_error("Option selection error.");
-        }
-
-    }
-    catch(const std::runtime_error &e)
-    {
-        globalType::errorType x;
-        x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
-        throw x;
-    }
-    //chessboard.deleteCheckbox(210, 33);
 }

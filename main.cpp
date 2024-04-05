@@ -1,12 +1,12 @@
 #include "Game.h"
 
-
 int main() {
 
     globalType::windowWidth  = 1000;
     globalType::windowHeight =  750;
     sf::RenderWindow window(sf::VideoMode(globalType::windowWidth, globalType::windowHeight), "Chess");
     globalType::windowPtr = &window;
+
 
     try
     {
@@ -20,5 +20,3 @@ int main() {
     }
     return 0;
 }
-
-
