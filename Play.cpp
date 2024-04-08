@@ -170,20 +170,15 @@ void Play::playWithUser()
         switch(gameOverParameter)
         {
             case 1:
-                //notice.communique(globalType::getCommuniqueCotent({22})[0]);
-                break;
+                chessboard.gameOverMenu(globalType::userWin);   break;
             case 2:
-                //notice.communique(globalType::getCommuniqueCotent({23})[0]);
-                break;
+                chessboard.gameOverMenu(globalType::stalemate); break;
             case 3:
-                //notice.communique(globalType::getCommuniqueCotent({24})[0]);
-                break;
+                chessboard.gameOverMenu(globalType::engineWin); break;
             case 4:
-                //notice.communique(globalType::getCommuniqueCotent({23})[0]);
-                break;
+                chessboard.gameOverMenu(globalType::stalemate); break;
             default: throw std::runtime_error("Wrong gameOverParameter.");
         }
-
     }
     catch(const std::runtime_error &e)
     {

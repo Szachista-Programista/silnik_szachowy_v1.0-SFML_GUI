@@ -285,7 +285,7 @@ int Chessboard::drawChessboard(bool underlightedCursor, int positionNumber)
     int numberOfSemiMoves = (showingPositionNumber == 0)? notation.size(): showingPositionNumber - 1;
     int numberOfLines = (numberOfSemiMoves + 1) / 2;
     int firstDisplaiedLine = (20 < numberOfLines)? (numberOfLines - 20): (0);
-    
+
     for(int x = 0, i = firstDisplaiedLine;  i < numberOfLines; x++, i++)
     {
         normalText.setPosition(firstColumnX, contentCoordY + linesSpace*x);
@@ -386,9 +386,9 @@ void Chessboard::checkWindowSize()
 }
 int Chessboard::promotionMenu()
 {
-    sf::Sprite buttons[4];
-    loadPromotionMenuTextures(buttons);
-    locatePromotionMenuTextures(buttons);
+    sf::Sprite button[4];
+    loadPromotionMenuTextures(button);
+    locatePromotionMenuTextures(button);
     while (globalType::windowPtr->isOpen())
     {
         checkWindowSize();
@@ -401,54 +401,52 @@ int Chessboard::promotionMenu()
                     exit(0);
                 }
             if (event.type == sf::Event::MouseMoved)
-                updatePromotionMenuButtons(buttons);
+                updatePromotionMenuButtons(button);
             if (event.type == sf::Event::MouseButtonPressed)
-            {
                 for (int i = 0; i < 4; i++)
                 {
-                    sf::FloatRect buttonBounds = buttons[i].getGlobalBounds();
+                    sf::FloatRect buttonBounds = button[i].getGlobalBounds();
                     if (buttonBounds.contains(sf::Vector2f(event.mouseButton.x, event.mouseButton.y)))
                         return i+1;
                 }
-            }
         }
-        drawPromotionMenu(buttons);
+        drawPromotionMenu(button);
     }
 }
-    void Chessboard::loadPromotionMenuTextures(sf::Sprite buttons[])
+    void Chessboard::loadPromotionMenuTextures(sf::Sprite button[])
 {
     for (int i = 0; i < 4; i++)
-        buttons[i].setTexture(color? pieceTextures[i+1]: pieceTextures[i+7]);
+        button[i].setTexture(color? pieceTextures[i+1]: pieceTextures[i+7]);
 }
-    void Chessboard::locatePromotionMenuTextures(sf::Sprite buttons[])
+    void Chessboard::locatePromotionMenuTextures(sf::Sprite button[])
 {
     for (int i = 0; i < 4; i++)
-        buttons[i].setOrigin(buttons[i].getGlobalBounds().width / 2.0f, buttons[i].getGlobalBounds().height / 2.0f);
+        button[i].setOrigin(button[i].getGlobalBounds().width / 2.0f, button[i].getGlobalBounds().height / 2.0f);
     float buttonSize  = squareSize * 1.5f;
-    float buttonsSpace =  squareSize * 0.2f;
-    float allButtosWidth = 3.0f * buttonSize + 3.0f * buttonsSpace;
+    float buttonSpace =  squareSize * 0.2f;
+    float allButtosWidth = 3.0f * buttonSize + 3.0f * buttonSpace;
     float allButtosXPosition = windowWidth / 2.0f - allButtosWidth / 2.0f;
     float buttonYPosition = windowHeight / 2.0f;
-    buttonScale = buttonSize  / pieceTextures[0].getSize().x * static_cast<float>(globalType::windowWidth)  / windowWidth;
+    promotionMenuButtonScale = buttonSize  / pieceTextures[0].getSize().x /** static_cast<float>(globalType::windowWidth)  / windowWidth*/;
 
     for(int i=0; i<4; i++)
     {
-        buttons[i].setPosition(allButtosXPosition + i * (buttonSize + buttonsSpace), buttonYPosition);
-        buttons[i].setScale(buttonScale, buttonScale);
+        button[i].setPosition(allButtosXPosition + i * (buttonSize + buttonSpace), buttonYPosition);
+        button[i].setScale(promotionMenuButtonScale, promotionMenuButtonScale);
     }
 }
-    void Chessboard::updatePromotionMenuButtons(sf::Sprite buttons[])
+    void Chessboard::updatePromotionMenuButtons(sf::Sprite button[])
 {
     for (int i = 0; i < 4; i++) {
-        sf::FloatRect buttonBounds = buttons[i].getGlobalBounds();
+        sf::FloatRect buttonBounds = button[i].getGlobalBounds();
         if (buttonBounds.contains(sf::Mouse::getPosition(*(globalType::windowPtr)).x, sf::Mouse::getPosition(*(globalType::windowPtr)).y))
-            buttons[i].setScale(buttonScale * 1.15f, buttonScale * 1.15f);
+            button[i].setScale(promotionMenuButtonScale * 1.15f, promotionMenuButtonScale * 1.15f);
         else
-            buttons[i].setScale(buttonScale, buttonScale);
+            button[i].setScale(promotionMenuButtonScale, promotionMenuButtonScale);
 
     }
 }
-    void Chessboard::drawPromotionMenu(sf::Sprite buttons[])
+    void Chessboard::drawPromotionMenu(sf::Sprite button[])
 {
     showingPositionNumber = 0;
     globalType::windowPtr->clear();
@@ -458,7 +456,7 @@ int Chessboard::promotionMenu()
     drawNotation();
     drawOverlay();
     for (int i = 0; i < 4; i++)
-        globalType::windowPtr->draw(buttons[i]);
+        globalType::windowPtr->draw(button[i]);
     globalType::windowPtr->display();
 }
         void Chessboard::drawOverlay()
@@ -531,5 +529,153 @@ globalType::chessboardUnderlightPointer Chessboard::copyChessboardUnderlight(con
     return cOpy;
 }
 
+int Chessboard::gameOverMenu(globalType::GameResult gameResult)
+{
+    sf::Texture buttonTexture[5];
+    sf::Sprite button[5];
+    loadGameOverMenuButtons(buttonTexture, button);
+    locateGameOverMenuButtons(buttonTexture, button);
+    while (globalType::windowPtr->isOpen())
+    {
+        checkWindowSize();
+        sf::Event event;
+        while (globalType::windowPtr->pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+            {
+                globalType::windowPtr->close();
+                exit(0);
+            }
+            if (event.type == sf::Event::MouseMoved)
+                updateGameOverMenuButtons(button);
+            if (event.type == sf::Event::MouseButtonPressed)
+                for (int i = 0; i < 4; i++)
+                {
+                    sf::FloatRect buttonBounds = button[i].getGlobalBounds();
+                    if (buttonBounds.contains(sf::Vector2f(event.mouseButton.x, event.mouseButton.y)))
+                        switch(i)
+                        {
+                            case 0: return mainMenu;
+                            case 1:
+                                if( ! notationSaved)
+                                {
+                                    button[1].setTexture(buttonTexture[4]);
+                                    button[1].setScale(gameOverMenuButtonScaleX, gameOverMenuButtonScaleY);
+                                    button[1].setColor(sf::Color(0,255,0,255));
+                                    saveGameInNotebook();
+                                    notationSaved = true;
+                                    break;
+                                }
+                            case 2: return watchPlayedGame;
+                            case 3: exit(0);
+                        }
+                }
+        }
+        drawGameOverMenu(button);
+    }
+}
+    void Chessboard::loadGameOverMenuButtons(sf::Texture buttonTexture[], sf::Sprite button[])
+{
+    if (!buttonTexture[0].loadFromFile("img/buttons/mainMenuButton.png"))
+        {}//return EXIT_FAILURE;
+    button[0].setTexture(buttonTexture[0]);
+    if (!buttonTexture[1].loadFromFile("img/buttons/saveNotationButton.png"))
+        {}//return EXIT_FAILURE;
+    button[1].setTexture(buttonTexture[1]);
+    if (!buttonTexture[2].loadFromFile("img/buttons/watchPlayedGameButton.png"))
+        {}//return EXIT_FAILURE;
+    button[2].setTexture(buttonTexture[2]);
+    if (!buttonTexture[3].loadFromFile("img/buttons/exitButton.png"))
+        {}//return EXIT_FAILURE;
+    button[3].setTexture(buttonTexture[3]);
+    if (!buttonTexture[4].loadFromFile("img/buttons/notationSavedButton.png"))
+        {}//return EXIT_FAILURE;
+    //button[4].setTexture(buttonTexture[4]);
+}
+    void Chessboard::locateGameOverMenuButtons(sf::Texture buttonTexture[], sf::Sprite button[])
+{
+    for (int i = 0; i < 4; i++)
+        button[i].setOrigin(button[i].getGlobalBounds().width / 2.0f, button[i].getGlobalBounds().height / 2.0f);
+    float buttonWidth  = 250.0f;
+    float buttonHeight =  50.0f;
+    float buttonSpace =  50.0f;
+    float allButtosHeight = 3.0f * buttonHeight + 3.0f * buttonSpace;
+    float buttonXPosition = windowWidth / 2.0f;
+    float allButtosYPosition = windowHeight / 2.0f - allButtosHeight / 2.0f;
+    gameOverMenuButtonScaleX = buttonWidth  / buttonTexture[0].getSize().x /** static_cast<float>(globalType::windowWidth)  / windowWidth*/;
+    gameOverMenuButtonScaleY = buttonHeight / buttonTexture[0].getSize().y /** static_cast<float>(globalType::windowHeight) / windowHeight*/;
+    for(int i=0; i<4; i++)
+    {
+        button[i].setPosition(buttonXPosition, allButtosYPosition + i * (buttonHeight + buttonSpace));
+        button[i].setScale(gameOverMenuButtonScaleX, gameOverMenuButtonScaleY);
+    }
+}
+    void Chessboard::updateGameOverMenuButtons(sf::Sprite button[])
+{
+    for (int i = 0; i < 4; i++)
+    {
+        if(i == 1 && notationSaved)
+            continue;
+        sf::FloatRect buttonBounds = button[i].getGlobalBounds();
+        if (buttonBounds.contains(sf::Mouse::getPosition(*(globalType::windowPtr)).x, sf::Mouse::getPosition(*(globalType::windowPtr)).y))
+            button[i].setScale(gameOverMenuButtonScaleX * 1.15f, gameOverMenuButtonScaleY * 1.15f);
+        else
+            button[i].setScale(gameOverMenuButtonScaleX, gameOverMenuButtonScaleY);
+    }
+}
+    void Chessboard::drawGameOverMenu(sf::Sprite button[])
+{
+    showingPositionNumber = 0;
+    globalType::windowPtr->clear();
+    globalType::windowPtr->draw(background);
+    globalType::windowPtr->draw(board);
+    drawPieces();
+    drawNotation();
+    drawOverlay();
+    for (int i = 0; i < 4; i++)
+        globalType::windowPtr->draw(button[i]);
+    globalType::windowPtr->display();
+}
 
 
+void Chessboard::saveGameInNotebook()
+{
+    auto now = std::chrono::system_clock::now();
+    time_t moment_t = std::chrono::system_clock::to_time_t(now);
+    std::ostringstream streamOut;
+    streamOut << std::put_time(localtime(&moment_t), " %Y-%m-%d %H;%M;%S");
+    std::string fileName = globalType::getCommuniqueCotent({44})[0] + streamOut.str();
+    std::ofstream file("saved notations/" + fileName + ".txt");
+    try
+    {
+        if (!file.is_open())
+            throw std::ofstream::failure("The file could not be opened for writing.");
+    }
+    catch(const std::ofstream::failure &e)
+    {
+        globalType::errorType x;
+        x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
+        throw x;
+    }
+    file<<std::put_time(localtime(&moment_t), ">>> %Y-%m-%d %H:%M:%S <<<")<<std::endl;
+    file<<"==========================="<<std::endl;
+    for(int i = 1, x = 0;; i++)
+    {
+        file<<((i < 10)? " ": "")<<i<<".    ";
+        if(x < notation.size())
+        {
+            file<<notation[x]<<"    ";
+            x++;
+        }
+        else
+            break;
+        if(x < notation.size())
+        {
+            file<<notation[x]<<std::endl;
+            x++;
+        }
+        else
+            break;
+    }
+    file.close();
+}

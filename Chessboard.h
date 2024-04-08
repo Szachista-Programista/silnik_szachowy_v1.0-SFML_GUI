@@ -1,5 +1,7 @@
 #ifndef CHESSBOARD_H
 #define CHESSBOARD_H
+#include <iomanip>
+#include <sstream>
 #include "GlobalDefinitions.h"
 
 /**
@@ -8,6 +10,14 @@
 class Chessboard{
 
 public:////////////////////////////////
+    enum GameOverMenuAction
+    {
+        mainMenu,
+        saveNotation,
+        watchPlayedGame,
+        quit
+    }gameOverMenuAction;
+
     bool color;
 
     float windowHeight;
@@ -16,7 +26,9 @@ public:////////////////////////////////
     float marginSize;
     float squareSize;
     float squareScale;
-    float buttonScale;
+    float promotionMenuButtonScale;
+    float gameOverMenuButtonScaleX;
+    float gameOverMenuButtonScaleY;
     float notationHeight;
     float notationWidth;
 
@@ -38,6 +50,8 @@ public:////////////////////////////////
     sf::Text normalText;
     sf::Font boldFont;
     sf::Text boldText;
+
+    bool notationSaved = false;
 
     sf::RectangleShape notationBackground;
 
@@ -64,7 +78,7 @@ public:////////////////////////////////
         void underlightCursorSquare();
         void drawPieces();
         void drawNotation();
-            void drawNotationContent();        
+            void drawNotationContent();
         int  getCursorCoords();
     void updateSquare  (int squareCoordX, int squareCoordY, int piece, bool pieceColor, bool underlight);
         void updateChessboard(int squareCoordX, int squareCoordY, int piece, bool pieceColor);
@@ -73,14 +87,25 @@ public:////////////////////////////////
     void underlight(int coordonates);
     void checkWindowSize();
     int promotionMenu();
-        void loadPromotionMenuTextures(sf::Sprite buttons[]);
-        void locatePromotionMenuTextures(sf::Sprite buttons[]);
-        void updatePromotionMenuButtons(sf::Sprite buttons[]);
-        void drawPromotionMenu(sf::Sprite buttons[]);
+        void loadPromotionMenuTextures(sf::Sprite button[]);
+        void locatePromotionMenuTextures(sf::Sprite button[]);
+        void updatePromotionMenuButtons(sf::Sprite button[]);
+        void drawPromotionMenu(sf::Sprite button[]);
             void drawOverlay();
     void savePosition();
     globalType::chessboardPointer copyChessboard(const globalType::chessboardPointer oryginal);
     globalType::chessboardUnderlightPointer copyChessboardUnderlight(const globalType::chessboardUnderlightPointer oryginal);
+
+
+int gameOverMenu(globalType::GameResult gameResult);
+    void loadGameOverMenuButtons(sf::Texture buttonTexture[], sf::Sprite button[]);
+    void locateGameOverMenuButtons(sf::Texture buttonTexture[], sf::Sprite button[]);
+    void updateGameOverMenuButtons(sf::Sprite button[]);
+    void drawGameOverMenu(sf::Sprite button[]);
+
+
+void saveGameInNotebook();
+
 //******************************************************************************************************
     enum Pieces{
         no,

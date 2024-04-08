@@ -3,23 +3,28 @@
 
 #include <SFML/Graphics.hpp>
 #include "Play.h"
-#include "Chessboard.h"///////////////////////
+
 class Game {
 public:///////////////////
-    enum MainMenuAction
+    enum MenuAction
     {
         playWhiteColor,
         playBlackColor,
         playRandomColor,
-        exit
-    }mainMenuAction;
+        back,
+        play,
+        settings,
+        quit
+    }menuAction;
 
+
+    float buttonScaleX;
+    float buttonScaleY;
 
 //private:
     sf::RenderWindow window;
     sf::Texture backgroundTexture;
     sf::Sprite background;
-    Chessboard x;
 
 public:
     Game();
@@ -28,13 +33,29 @@ public:
 
 //private:
 
-MainMenuAction mainMenu();
+void checkWindowSize();
+
+
+MenuAction mainMenu();
     void loadMainMenuButtons(sf::Texture buttonTexture[], sf::Sprite button[]);
     void locateMainMenuButtons(sf::Texture buttonTexture[], sf::Sprite button[]);
-    void checkWindowSize();
-    void updateMainMenuButtons(sf::Sprite button[], sf::Color originalColor, sf::Color darkColor);
+    void updateMainMenuButtons(sf::Sprite button[]);
     void drawMainMenu(sf::Sprite button[]);
-    int randomColor()noexcept;
+/*
+MenuAction playMenu();
+    void loadPlayMenuButtons(sf::Texture buttonTexture[], sf::Sprite button[]);
+    void locatePlayMenuButtons(sf::Texture buttonTexture[], sf::Sprite button[]);
+    void updatePlayMenuButtons(sf::Sprite button[]);
+    void drawPlayMenu(sf::Sprite button[]);
+
+MenuAction settingsMenu();
+    void loadSettingsMenuButtons(sf::Texture buttonTexture[], sf::Sprite button[]);
+    void locateSettingsMenuButtons(sf::Texture buttonTexture[], sf::Sprite button[]);
+    void updateSettingsMenuButtons(sf::Sprite button[]);
+    void drawSettingsMenu(sf::Sprite button[]);
+*/
+
+int  randomColor()noexcept;
 };
 
 #endif//GAME_H

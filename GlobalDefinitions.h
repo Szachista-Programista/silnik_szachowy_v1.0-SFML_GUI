@@ -83,6 +83,11 @@ namespace globalType{
         middlegame,
         endgame
     };
+    enum GameResult{
+        engineWin,
+        stalemate,
+        userWin
+    };
     enum KindOfEndgame{
         rooksAndQueensMate,
         rookOrQueenMate,

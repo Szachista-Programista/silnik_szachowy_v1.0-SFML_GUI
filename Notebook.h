@@ -42,8 +42,7 @@ class Notebook{
     std::string pixelArtCharacterArray[globalType::numberOfChars]          [globalType::letterHeight];
     std::string notationColumnArray   [globalType::numberOfNotationColumn] [globalType::columnHeight];
 
-    std::vector<std::string>entireDoubleNotation;
-    std::vector<std::string>entireSingleNotation;
+    std::vector<std::string>entireNotation;
 
     globalType::chessboardPointer previousChessboard;
 public: globalType::chessboardPointer currentChessboard;
@@ -70,6 +69,5 @@ private:    void updateParameterValues(int moveCode);
                     void replacePlusWithHashtag();
 public: std::string getChessboardUpdateCode()noexcept;
 private:    void generateChessboardUpdateCode()noexcept;
-public: std::string saveGameInNotebook();
 };
 #endif//NOTEBOOK_H

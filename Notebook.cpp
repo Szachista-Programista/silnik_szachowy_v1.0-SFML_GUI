@@ -107,7 +107,7 @@ std::vector<std::string> Notebook::getNotation  (int moveCode)
     updateParameterValues(moveCode);
     markMoveAndWriteNotation();
     updateEntireNotation();
-    return entireSingleNotation;
+    return entireNotation;
 }
     void Notebook::updateParameterValues (int moveCode)
 {
@@ -468,36 +468,26 @@ std::vector<std::string> Notebook::getNotation  (int moveCode)
 }
     void Notebook::updateEntireNotation()
 {
-    std::ostringstream doubleNote;
-    std::ostringstream singleNote;
+    std::ostringstream note;
     if(gameOver)
         endgameService();
-    if(semiMoveNumber % 2)
+    if( ! gameOver)
     {
-        doubleNote<<std::right<<std::setw(3)<<moveNumber<<". "<<std::left<<std::setw(8)<<lastMoveNotation;
-        singleNote<<std::left<<std::setw(8)<<lastMoveNotation;
-        if(gameOverParameter == 3 || gameOverParameter == 4)
-        {
-            doubleNote<<std::left<<std::setw(7)<<gameResult;
-            singleNote<<std::left<<std::setw(8)<<gameResult;
-        }
-        entireDoubleNotation.push_back(doubleNote.str());
-        entireSingleNotation.push_back(singleNote.str());
+        note<<std::left<<std::setw(8)<<lastMoveNotation;
+        entireNotation.push_back(note.str());        
     }
-    else
+    if(gameOverParameter == 1 || gameOverParameter == 2)
     {
-        doubleNote<<std::left<<std::setw(7)<<lastMoveNotation;
-        singleNote<<std::left<<std::setw(8)<<lastMoveNotation;
-        entireDoubleNotation[moveNumber-1] += doubleNote.str();
-        entireSingleNotation.push_back(singleNote.str());
-        if(gameOverParameter == 3 || gameOverParameter == 4)
-        {
-            doubleNote.str("");
-            doubleNote<<std::right<<std::setw(3)<<moveNumber + 1<<". "<<std::left<<std::setw(8)<<gameResult;
-            singleNote<<std::left<<std::setw(8)<<gameResult;
-            entireDoubleNotation.push_back(doubleNote.str());
-            entireSingleNotation.push_back(singleNote.str());
-        }
+        note<<std::left<<std::setw(8)<<gameResult;
+        entireNotation.push_back(note.str());
+    }
+    if(gameOverParameter == 3 || gameOverParameter == 4)
+    {
+        note<<std::left<<std::setw(8)<<lastMoveNotation;
+        entireNotation.push_back(note.str());
+        note.str("");
+        note<<std::left<<std::setw(8)<<gameResult;
+        entireNotation.push_back(note.str());
     }
 }
         void Notebook::endgameService()
@@ -508,10 +498,10 @@ std::vector<std::string> Notebook::getNotation  (int moveCode)
         {
             case 1:// user win
                 replacePlusWithHashtag();
-                lastMoveNotation = (semiMoveNumber%2)? "0.1": "1.0";
+                gameResult = (semiMoveNumber%2)? "0.1": "1.0";
                 break;
             case 2:// stalemate by user
-                lastMoveNotation = "1/2-1/2";
+                gameResult = "1/2-1/2";
                 break;
             case 3:// engine win
                 gameResult = (semiMoveNumber%2)? "1.0": "0.1";
@@ -531,15 +521,11 @@ std::vector<std::string> Notebook::getNotation  (int moveCode)
 }
             void Notebook::replacePlusWithHashtag()
 {
-    int doubleNotationEditingStringIndex = moveNumber - ((semiMoveNumber % 2)? 2: 1);
-    int singleNotationEditingStringIndex = semiMoveNumber - 2;
-    int doubleNotationplusIndex = entireDoubleNotation[doubleNotationEditingStringIndex].rfind('+');
-    int singleNotationplusIndex = entireSingleNotation[singleNotationEditingStringIndex].rfind('+');
+    int notationEditingStringIndex = semiMoveNumber - 2;
+    int notationplusIndex = entireNotation[notationEditingStringIndex].rfind('+');
     try
     {
-        if (doubleNotationplusIndex == std::string::npos)
-            throw std::runtime_error("The '+' sign was not found in the edited text fragment.");
-        if (singleNotationplusIndex == std::string::npos)
+        if (notationplusIndex == std::string::npos)
             throw std::runtime_error("The '+' sign was not found in the edited text fragment.");
     }
     catch(const std::runtime_error &e)
@@ -548,8 +534,7 @@ std::vector<std::string> Notebook::getNotation  (int moveCode)
         x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
         throw x;
     }
-    entireDoubleNotation[doubleNotationEditingStringIndex][doubleNotationplusIndex] = '#';
-    entireSingleNotation[singleNotationEditingStringIndex][singleNotationplusIndex] = '#';
+    entireNotation[notationEditingStringIndex][notationplusIndex] = '#';
 }
 std::string Notebook::getChessboardUpdateCode()noexcept
 {
@@ -566,30 +551,4 @@ std::string Notebook::getChessboardUpdateCode()noexcept
                 chessboardUpdateCode += std::to_string(j) + std::to_string(i) + currentChessboard[i][j];
                 previousChessboard[i][j] = currentChessboard[i][j];
             }
-}
-std::string Notebook::saveGameInNotebook()
-{
-    auto now = std::chrono::system_clock::now();
-    time_t moment_t = std::chrono::system_clock::to_time_t(now);
-    std::ostringstream streamOut;
-    streamOut << std::put_time(localtime(&moment_t), " %Y-%m-%d %H;%M;%S");
-    std::string fileName = globalType::getCommuniqueCotent({44})[0] + streamOut.str();
-    std::ofstream file("saved notations/" + fileName + ".txt");
-    try
-    {
-        if (!file.is_open())
-            throw std::ofstream::failure("The file could not be opened for writing.");
-    }
-    catch(const std::ofstream::failure &e)
-    {
-        globalType::errorType x;
-        x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
-        throw x;
-    }
-    file<<std::put_time(localtime(&moment_t), ">>> %Y-%m-%d %H:%M:%S <<<")<<std::endl;
-    file<<"==========================="<<std::endl;
-    for(auto& line: entireDoubleNotation)
-    file<<line<<std::endl;
-    file.close();
-    return "\"" + fileName + "\"";
 }
