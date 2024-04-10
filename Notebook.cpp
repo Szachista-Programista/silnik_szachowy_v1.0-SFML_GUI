@@ -4,7 +4,6 @@ Notebook::Notebook(bool k): color{k}
 {
     currentChessboard  = loadPiecesArrangement();
     previousChessboard = loadPiecesArrangement();
-    loadChars();
 }
     globalType::chessboardPointer Notebook::loadPiecesArrangement()
 {
@@ -64,38 +63,6 @@ Notebook::Notebook(bool k): color{k}
     }
     reading.close();
     return chessboard;
-}
-    void Notebook::loadChars()
-{
-    std::ifstream reading;
-    std::string charArray;
-    try
-    {
-        reading.open("chars.txt");
-        if (!reading.is_open())
-            throw std::ifstream::failure("The file 'chars.txt' cannot be opened .");
-
-        for(int i=0; i<globalType::numberOfChars; i++)
-        {
-            if (!getline(reading, charArray))
-                throw std::ifstream::failure("Error reading character from 'chars.txt' file .");
-            charArray.erase(0, 2);
-            for(int j=0, k=0; j<globalType::letterHeight; j++, k++)
-                for(; charArray[k] != '$'; k++)
-                {
-                    if (k >= charArray.size())
-                        throw std::ifstream::failure("Unexpected line ending in 'chars.txt' file.");
-                    pixelArtCharacterArray[i][j] += charArray[k];
-                }
-        }
-    }
-    catch(const std::ifstream::failure &e)
-    {
-        globalType::errorType x;
-        x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
-        throw x;
-    }
-    reading.close();
 }
 Notebook::~Notebook()noexcept
 {

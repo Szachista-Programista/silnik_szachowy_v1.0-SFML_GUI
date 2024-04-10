@@ -37,11 +37,6 @@ class Notebook{
     std::string gameResult;
     std::string chessboardUpdateCode;
 
-    std::string notationArray[globalType::letterHeight];
-
-    std::string pixelArtCharacterArray[globalType::numberOfChars]          [globalType::letterHeight];
-    std::string notationColumnArray   [globalType::numberOfNotationColumn] [globalType::columnHeight];
-
     std::vector<std::string>entireNotation;
 
     globalType::chessboardPointer previousChessboard;

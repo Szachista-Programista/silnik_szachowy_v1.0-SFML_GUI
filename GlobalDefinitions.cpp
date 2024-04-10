@@ -22,8 +22,10 @@ namespace globalType{
     double userKingX;
     double userKingY;
 
-    int windowWidth;
-    int windowHeight;
+    int previousWindowWidth;
+    int previousWindowHeight;
+    int currentWindowWidth;
+    int currentWindowHeight;
 
     sf::RenderWindow *windowPtr;
 
@@ -203,7 +205,7 @@ namespace systemInfo
                 throw x;
             }
             #else
-                #error the program only supports(Windosw/Mac_OS/Linux)
+                #error the program only supports(Windows/Mac_OS/Linux)
             #endif
     }
     void setCursorPosition(int x, int y)
@@ -239,7 +241,7 @@ namespace systemInfo
         #elif __linux__
             std::cout<<"\033["<<y+1<<";"<<x+1<<"H";
         #else
-            #error the program only supports(Windosw/Mac_OS/Linux)
+            #error the program only supports(Windows/Mac_OS/Linux)
         #endif
     }
     char getChar()
@@ -289,7 +291,7 @@ namespace systemInfo
             }
             return ch;
         #else
-            #error the program only supports(Windosw/Mac_OS/Linux)
+            #error the program only supports(Windows/Mac_OS/Linux)
         #endif
     }
     void clearScreen()noexcept
@@ -301,7 +303,7 @@ namespace systemInfo
         #elif __linux__
             std::cout << "\033[2J\033[1;1H";
         #else
-            #error the program only supports(Windosw/Mac_OS/Linux)
+            #error the program only supports(Windows/Mac_OS/Linux)
         #endif
     }
 }

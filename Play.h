@@ -6,15 +6,17 @@
 #include "Notebook.h"
 #include "Notice.h"
 /**
- * @brief 
+ * @brief
  */
 class Play{
     bool color;
     bool correctMovementMade;
     bool firstCoordChoosen;
+    bool gameOver = false;
     int engineMoveCode;
     int userMoveCode;
     int chosenCoordinates;
+    int userActionCode;
 
     Notice     notice;
     Chessboard chessboard;
@@ -25,13 +27,14 @@ class Play{
 public: Play(bool k)noexcept;
         void playWithUser();
 private:    bool userMoveService();
+                bool userActionService();
                 bool isChosenUserPiece();
                 void firstCoordService();
                 void secondCoordService();
-                    bool isUserMakesPromotion()noexcept;      
+                    bool isUserMakesPromotion()noexcept;
                         void updateChessboard(std::string updateCode, bool underlight);
                             int  getPieceCode (char cHar);
-                            bool getPieceColor(char cHar);                              
+                            bool getPieceColor(char cHar);
             bool engineMoveService(int moveCode);
                 bool isItGameover();
 

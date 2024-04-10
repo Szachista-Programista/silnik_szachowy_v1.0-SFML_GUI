@@ -10,21 +10,23 @@ void Play::playWithUser()
     if(color == false) //engine starts the game
         engineMoveService(10000);
     while(userMoveService() && engineMoveService(userMoveCode)){}
+
 }
     bool Play::userMoveService()
 {
     firstCoordChoosen = false;
     while(true)
     {
+        if(gameOver)
+            return false;
         if(!firstCoordChoosen)
         {
-            chosenCoordinates = chessboard.loadCoordinates();
-            if(isChosenUserPiece())
-                firstCoordService();
+            if(userActionService())
+                if(isChosenUserPiece())
+                    firstCoordService();
         }
-        else
+        else if(userActionService())
         {
-            chosenCoordinates = chessboard.loadCoordinates();
             if(isChosenUserPiece())
                 firstCoordService();
             else
@@ -43,6 +45,25 @@ void Play::playWithUser()
             }
         }
     }
+}
+        bool Play::userActionService()
+{
+    userActionCode = chessboard.getUserAction();
+    if(0 <= userActionCode && userActionCode <= 77)
+    {
+        chosenCoordinates = userActionCode;
+        return true;
+    }
+    if(80 == userActionCode)
+        chessboard.displayPastMovements(1, false);
+    if(81 == userActionCode)
+        chessboard.displayPastMovements(chessboard.positions.size()-2, false);
+    if(userActionCode == 84 || chessboard.menuButtonPressed)
+    {
+        chessboard.menuButtonPressed = false;
+        gameOver = chessboard.gameMenu();
+    }
+    return false;
 }
         bool Play::isChosenUserPiece()
 {
@@ -63,6 +84,7 @@ void Play::playWithUser()
     if(isUserMakesPromotion())
         userMoveCode += chessboard.promotionMenu() * 10000;
     chessboard.notation = notebook.getNotation(userMoveCode);
+    chessboard.notationSaved = false;
     updateChessboard(notebook.getChessboardUpdateCode(), true);
     chessboard.drawChessboard();
 }

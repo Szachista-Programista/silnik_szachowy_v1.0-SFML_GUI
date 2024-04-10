@@ -1,16 +1,9 @@
 #include "Game.h"
 
 int main() {
-
-    globalType::windowWidth  = 1000;
-    globalType::windowHeight =  750;
-    sf::RenderWindow window(sf::VideoMode(globalType::windowWidth, globalType::windowHeight), "Chess");
-    globalType::windowPtr = &window;
-
-
     try
     {
-        Game game;
+        Game game(1000, 750);
         game.run();
     }
     catch(globalType::errorType &e)

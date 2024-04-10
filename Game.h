@@ -3,7 +3,6 @@
 
 #include <SFML/Graphics.hpp>
 #include "Play.h"
-
 class Game {
 public:///////////////////
     enum MenuAction
@@ -11,11 +10,18 @@ public:///////////////////
         playWhiteColor,
         playBlackColor,
         playRandomColor,
-        back,
+        goBack,
         play,
         settings,
-        quit
+        quit,
+        ok
     }menuAction;
+    enum NumberOfButtons
+    {
+        mainMenuButtons = 3,
+        playMenuButtons = 4,
+        settingsMenuButtons = 2,
+    };
 
 
     float buttonScaleX;
@@ -27,35 +33,23 @@ public:///////////////////
     sf::Sprite background;
 
 public:
-    Game();
+    Game(int width, int height);
     void readBackgroundTexture();
     void run();
 
-//private:
-
-void checkWindowSize();
-
-
 MenuAction mainMenu();
     void loadMainMenuButtons(sf::Texture buttonTexture[], sf::Sprite button[]);
-    void locateMainMenuButtons(sf::Texture buttonTexture[], sf::Sprite button[]);
-    void updateMainMenuButtons(sf::Sprite button[]);
-    void drawMainMenu(sf::Sprite button[]);
-/*
+
 MenuAction playMenu();
     void loadPlayMenuButtons(sf::Texture buttonTexture[], sf::Sprite button[]);
-    void locatePlayMenuButtons(sf::Texture buttonTexture[], sf::Sprite button[]);
-    void updatePlayMenuButtons(sf::Sprite button[]);
-    void drawPlayMenu(sf::Sprite button[]);
 
 MenuAction settingsMenu();
     void loadSettingsMenuButtons(sf::Texture buttonTexture[], sf::Sprite button[]);
-    void locateSettingsMenuButtons(sf::Texture buttonTexture[], sf::Sprite button[]);
-    void updateSettingsMenuButtons(sf::Sprite button[]);
-    void drawSettingsMenu(sf::Sprite button[]);
-*/
 
+void checkWindowSize();
+void locateMenuButtons(sf::Texture buttonTexture[], sf::Sprite button[], NumberOfButtons x);
+void updateMenuButtons(sf::Sprite button[], NumberOfButtons x);
+void drawMenu(sf::Sprite button[], NumberOfButtons x);
 int  randomColor()noexcept;
 };
-
 #endif//GAME_H

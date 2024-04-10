@@ -21,7 +21,7 @@
     #include <termios.h>
     #include <unistd.h>
 #else
-    #error the program only supports(Windosw/Mac_OS/Linux)
+    #error the program only supports(Windows/Mac_OS/Linux)
 #endif
 
 namespace globalType{
@@ -47,8 +47,10 @@ namespace globalType{
     extern double userKingX;
     extern double userKingY;
 
-    extern int windowWidth;
-    extern int windowHeight;
+    extern int previousWindowWidth;
+    extern int previousWindowHeight;
+    extern int currentWindowWidth;
+    extern int currentWindowHeight;
 
     extern sf::RenderWindow *windowPtr;
 
