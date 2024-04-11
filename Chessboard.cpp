@@ -469,8 +469,8 @@ void Chessboard::underlight(int coordonates)
 void Chessboard::checkWindowSize()
 {
     sf::Vector2u windowSize = globalType::windowPtr->getSize();
-    if (windowSize.x != globalType::currentWindowWidth || windowSize.y != globalType::currentWindowHeight) {
-        globalType::windowPtr->setSize({globalType::currentWindowWidth, globalType::currentWindowHeight});
+    if (windowSize.x != windowWidth || windowSize.y != windowHeight) {
+        globalType::windowPtr->setSize({windowWidth, windowHeight});
     }
 }
 

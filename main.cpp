@@ -9,7 +9,6 @@ int main() {
     catch(globalType::errorType &e)
     {
         std::cout<<e.errorMessage;
-        systemInfo::getChar();
     }
     return 0;
 }

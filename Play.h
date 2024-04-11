@@ -4,7 +4,6 @@
 #include "Chessboard.h"
 #include "Engine.h"
 #include "Notebook.h"
-#include "Notice.h"
 /**
  * @brief
  */
@@ -18,7 +17,6 @@ class Play{
     int chosenCoordinates;
     int userActionCode;
 
-    Notice     notice;
     Chessboard chessboard;
     Engine     engine;
     Notebook   notebook;

@@ -22,7 +22,9 @@ public:///////////////////
         playMenuButtons = 4,
         settingsMenuButtons = 2,
     };
-
+    
+    float windowHeight;
+    float windowWidth;
 
     float buttonScaleX;
     float buttonScaleY;

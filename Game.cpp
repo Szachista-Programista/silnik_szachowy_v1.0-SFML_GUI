@@ -2,9 +2,10 @@
 
 Game::Game(int width, int height): window(sf::VideoMode(width, height), "Chess")
 {
-    globalType::previousWindowWidth  = globalType::currentWindowWidth  = width;
-    globalType::previousWindowHeight = globalType::currentWindowHeight = height;
     globalType::windowPtr = &window;
+
+    windowHeight = height;
+    windowWidth  = width;
 
     globalType::readConfigFile();
     globalType::readCommuniqueFile();
@@ -199,9 +200,9 @@ void Game::loadSettingsMenuButtons(sf::Texture buttonTexture[], sf::Sprite butto
 void Game::checkWindowSize()
 {
     sf::Vector2u windowSize = globalType::windowPtr->getSize();
-    if (windowSize.x != globalType::currentWindowWidth || windowSize.y != globalType::currentWindowHeight)
+    if (windowSize.x != windowWidth || windowSize.y != windowHeight)
     {
-        globalType::windowPtr->setSize({globalType::currentWindowWidth, globalType::currentWindowHeight});
+        globalType::windowPtr->setSize({windowWidth, windowHeight});
     }
 }
 void Game::locateMenuButtons(sf::Texture buttonTexture[], sf::Sprite button[], NumberOfButtons x)

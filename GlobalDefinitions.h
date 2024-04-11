@@ -47,11 +47,6 @@ namespace globalType{
     extern double userKingX;
     extern double userKingY;
 
-    extern int previousWindowWidth;
-    extern int previousWindowHeight;
-    extern int currentWindowWidth;
-    extern int currentWindowHeight;
-
     extern sf::RenderWindow *windowPtr;
 
     enum{
@@ -127,11 +122,5 @@ namespace globalType{
     void writeConfigFile();
     void readCommuniqueFile();
     std::vector<std::string> getCommuniqueCotent(const std::vector<int> &indexes);
-}
-namespace systemInfo {
-    void setConsoleColor(globalType::Color color);
-    void setCursorPosition(int x, int y);
-    char getChar();
-    void clearScreen()noexcept;
 }
 #endif//GLOBAL_DEFINITIONS_H

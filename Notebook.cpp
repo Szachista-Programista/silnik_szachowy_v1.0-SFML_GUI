@@ -193,10 +193,10 @@ std::vector<std::string> Notebook::getNotation  (int moveCode)
         lastMoveNotation += '=';
         switch(promotionParameter)
         {
-            case 1: lastMoveNotation += globalType::getCommuniqueCotent({38})[0]; currentChessboard[moveToY][moveToX] = (engineMove?'N':'n'); break;
-            case 2: lastMoveNotation += globalType::getCommuniqueCotent({39})[0]; currentChessboard[moveToY][moveToX] = (engineMove?'B':'b'); break;
-            case 3: lastMoveNotation += globalType::getCommuniqueCotent({40})[0]; currentChessboard[moveToY][moveToX] = (engineMove?'R':'r'); break;
-            case 4: lastMoveNotation += globalType::getCommuniqueCotent({41})[0]; currentChessboard[moveToY][moveToX] = (engineMove?'Q':'q'); break;
+            case 1: lastMoveNotation += 'N'; currentChessboard[moveToY][moveToX] = (engineMove?'N':'n'); break;
+            case 2: lastMoveNotation += 'B'; currentChessboard[moveToY][moveToX] = (engineMove?'B':'b'); break;
+            case 3: lastMoveNotation += 'R'; currentChessboard[moveToY][moveToX] = (engineMove?'R':'r'); break;
+            case 4: lastMoveNotation += 'Q'; currentChessboard[moveToY][moveToX] = (engineMove?'Q':'q'); break;
             default: break;
         }
     }
@@ -238,16 +238,16 @@ std::vector<std::string> Notebook::getNotation  (int moveCode)
                     break;
                 }
                 case 'B': case 'b':
-                    lastMoveNotation += globalType::getCommuniqueCotent({39})[0];
+                    lastMoveNotation += 'B';
                     break;
                 case 'R': case 'r':
                     markRookMove(movedPiece);
                     break;
                 case 'Q': case 'q':
-                    lastMoveNotation += globalType::getCommuniqueCotent({41})[0];
+                    lastMoveNotation += 'Q';
                     break;
                 case 'K': case 'k':
-                    lastMoveNotation += globalType::getCommuniqueCotent({42})[0];
+                    lastMoveNotation += 'K';
                     break;
                 default: throw std::runtime_error("Wrong piece.");
             }
@@ -267,7 +267,7 @@ std::vector<std::string> Notebook::getNotation  (int moveCode)
 }
             void Notebook::markKnightMove(char movedPiece)
 {
-    lastMoveNotation += globalType::getCommuniqueCotent({38})[0];
+    lastMoveNotation += 'N';
 
     int secondKnightX,
         secondKnightY;
@@ -304,7 +304,7 @@ std::vector<std::string> Notebook::getNotation  (int moveCode)
 }
             void Notebook::markRookMove(char movedPiece)
 {
-    lastMoveNotation += globalType::getCommuniqueCotent({40})[0];
+    lastMoveNotation += 'R';
     if(moveFromY == moveToY)  //horizontal movement
         for(int i=moveToX+((moveFromX<moveToX)? +1: -1); 0<=i && i<=7; (moveFromX<moveToX)? i++: i--)
         {
@@ -441,7 +441,7 @@ std::vector<std::string> Notebook::getNotation  (int moveCode)
     if( ! gameOver)
     {
         note<<std::left<<std::setw(8)<<lastMoveNotation;
-        entireNotation.push_back(note.str());        
+        entireNotation.push_back(note.str());
     }
     if(gameOverParameter == 1 || gameOverParameter == 2)
     {
