@@ -1,9 +1,11 @@
 #include "Game.h"
 
 int main() {
+    globalType::windowHeight = 750;
+    globalType::windowWidth  = 1000;
     try
     {
-        Game game(1000, 750);
+        Game game;
         game.run();
     }
     catch(globalType::errorType &e)

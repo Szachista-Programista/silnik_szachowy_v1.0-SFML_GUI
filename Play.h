@@ -4,6 +4,7 @@
 #include "Chessboard.h"
 #include "Engine.h"
 #include "Notebook.h"
+#include "Menu.h"
 /**
  * @brief
  */
@@ -20,6 +21,9 @@ class Play{
     Chessboard chessboard;
     Engine     engine;
     Notebook   notebook;
+    Menu       menu;
+
+    bool isNotationSaved = false;
 
 //********************************************************************************
 public: Play(bool k)noexcept;

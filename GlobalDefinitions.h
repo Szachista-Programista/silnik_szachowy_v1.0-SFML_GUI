@@ -49,28 +49,6 @@ namespace globalType{
 
     extern sf::RenderWindow *windowPtr;
 
-    enum{
-        numberOfLanguages      = 2,
-        numberOfNotationColumn = 3,
-        numberOfPieces         = 7,
-        letterHeight           = 9,
-        notationLineHeight     = 11,
-        communiqueHeight       = 13,
-        numberOfCommuniques    = 48,
-        checkboxHeight         = 73,
-        numberOfChars          = 74,
-        columnHeight           = 176,
-        columnWidth            = 176,
-        chessboardHeight       = 176,
-        chessboardwidth        = 416
-    };
-    enum Color{
-        white,
-        red,
-        green,
-        yellow,
-        blue
-    };
     enum Languages{
         polish,
         english
@@ -102,16 +80,32 @@ namespace globalType{
         engineDownLeftCorner,
         engineUpLeftCorner
     };
-
+    enum MenuAction{
+        goBack,
+        backToGame,
+        black,
+        mainMenu,
+        play,
+        random,
+        saveNotation,
+        settings,
+        watchPlayedGame,
+        white,
+        quit,
+        displayPastMovements
+    } extern menuAction;
+    
     using chessboardPointer = char(*)[8];
     using chessboardUnderlightPointer = bool(*)[8];
     struct errorType{std::string errorMessage;};
-    extern std::string communiquesArray[][numberOfLanguages];
 
-    extern Color menu;
-    extern Color notation;
-    extern Color underlightedSquare;
-    extern Color chsenOption;
+    extern float windowWidth;
+    extern float windowHeight;
+
+    extern int numberOfButtonTexture;
+    extern int numberOfBackgroundTexture;
+    extern int numberOfBoardTexture;
+
     extern Languages setLanguage;
     extern GameStage gameStage;
     extern KindOfEndgame choosenEndgame;
@@ -120,7 +114,5 @@ namespace globalType{
 //********************************************************************************
     void readConfigFile();
     void writeConfigFile();
-    void readCommuniqueFile();
-    std::vector<std::string> getCommuniqueCotent(const std::vector<int> &indexes);
 }
 #endif//GLOBAL_DEFINITIONS_H

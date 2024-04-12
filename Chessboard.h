@@ -10,13 +10,8 @@
 class Chessboard{
 
 public:////////////////////////////////
-    /*enum GameOverMenuAction
-    {
-        mainMenu,
-        saveNotation,
-        watchPlayedGame,
-        quit
-    }gameOverMenuAction;*/
+
+
     enum NumberOfButtons
     {
         gameOverMenuButtons = 4,
@@ -26,8 +21,6 @@ public:////////////////////////////////
     bool color;
     bool menuButtonPressed = false;
 
-    float windowHeight;
-    float windowWidth;
     float boardSize;
     float marginSize;
     float squareSize;
@@ -43,7 +36,7 @@ public:////////////////////////////////
 
     int showingPositionNumber;
 
-
+/////////////////
     sf::Texture backgroundTexture;
     sf::Sprite  background;
     sf::Texture boardTexture;
@@ -114,21 +107,7 @@ public:////////////////////////////////
     globalType::chessboardUnderlightPointer copyChessboardUnderlight(const globalType::chessboardUnderlightPointer oryginal);
 
 
-void gameOverMenu(globalType::GameResult gameResult);
-    void loadGameOverMenuButtons(sf::Texture buttonTexture[], sf::Sprite button[]);
-    void locateGameOverMenuButtons(sf::Texture buttonTexture[], sf::Sprite button[]);
-    void updateGameOverMenuButtons(sf::Sprite button[]);
-    void drawGameOverMenu(sf::Sprite button[]);
     void saveGameInNotebook();
-
-
-bool gameMenu();
-    void loadGameMenuButtons(sf::Texture buttonTexture[], sf::Sprite button[]);
-    void locateGameMenuButtons(sf::Texture buttonTexture[], sf::Sprite button[]);
-    void updateGameMenuButtons(sf::Sprite button[]);
-    void drawGameMenu(sf::Sprite button[]);
-
-
 
 
 

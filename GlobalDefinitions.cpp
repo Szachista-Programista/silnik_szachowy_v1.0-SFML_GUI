@@ -24,12 +24,14 @@ namespace globalType{
 
     sf::RenderWindow *windowPtr;
 
-    std::string communiquesArray[numberOfCommuniques][numberOfLanguages];
+    float windowWidth;
+    float windowHeight;
 
-    Color menu;
-    Color notation;
-    Color underlightedSquare;
-    Color chsenOption;
+    MenuAction menuAction;
+
+    int numberOfButtonTexture;
+    int numberOfBackgroundTexture;
+    int numberOfBoardTexture;
     Languages setLanguage;
     GameStage gameStage;
     KindOfEndgame choosenEndgame;
@@ -47,8 +49,6 @@ namespace globalType{
                 throw std::ifstream::failure("The file 'config.txt' cannot be opened .");
             if (!getline(reading, data))
                 throw std::ifstream::failure("Error reading character from 'config.txt' file .");
-            //if (data.size() != 5)
-                //throw std::ifstream::failure("Wrong content of 'config.txt' file.");
         }
         catch(const std::ifstream::failure &e)
         {
@@ -58,20 +58,17 @@ namespace globalType{
         }
         reading.close();
 
-        setLanguage        = static_cast<Languages>(data[0]-'0');
-        menu               = static_cast<Color>    (data[1]-'0');
-        notation           = static_cast<Color>    (data[2]-'0');
-        underlightedSquare = static_cast<Color>    (data[3]-'0');
-        chsenOption        = static_cast<Color>    (data[4]-'0');
+        numberOfButtonTexture     = static_cast<int>(data[0] - '0');
+        numberOfBackgroundTexture = static_cast<int>(data[1] - '0');
+        numberOfBoardTexture      = static_cast<int>(data[2] - '0');
     }
     void writeConfigFile()
     {
         std::string data{};
-        data += static_cast<char>(setLanguage        +'0');
-        data += static_cast<char>(menu               +'0');
-        data += static_cast<char>(notation           +'0');
-        data += static_cast<char>(underlightedSquare +'0');
-        data += static_cast<char>(chsenOption        +'0');
+        data += static_cast<char>(numberOfButtonTexture     + '0');
+        data += static_cast<char>(numberOfBackgroundTexture + '0');
+        data += static_cast<char>(numberOfBoardTexture      + '0');
+
         std::ofstream file("config.txt");
         try
         {
@@ -86,56 +83,6 @@ namespace globalType{
         }
         file << data;
         file.close();
-    }
-    void readCommuniqueFile()
-    {
-        try
-        {
-            std::ifstream reading;
-            std::string line;
-            reading.open("communique.txt");
-            if (!reading.is_open())
-                throw std::ifstream::failure("The file 'communique.txt' cannot be opened.");
-
-            for(int i=0; i<numberOfCommuniques; i++)
-            {
-                if (!getline(reading, line))
-                    throw std::ifstream::failure("Error reading content from 'communique.txt' file.");
-                for(int j=0, k=0; j<numberOfLanguages; j++, k++)
-                    for(; line[k] != '$'; k++)
-                    {
-                        //if (k >= line.size())
-                            //throw std::ifstream::failure("Unexpected line ending in 'communique.txt' file.");
-                        communiquesArray[i][j] += line[k];
-                    }
-            }
-            reading.close();
-        }
-        catch(const std::ifstream::failure &e)
-        {
-            errorType x;
-            x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
-            throw x;
-        }
-    }
-    std::vector<std::string> getCommuniqueCotent(const std::vector<int> &indexes)
-    {
-        std::vector<std::string> result;
-        try
-        {
-            for (int index : indexes) {
-                if (index <= 0 && numberOfCommuniques <= index)
-                    throw std::invalid_argument("Wrong index.");
-                result.push_back(communiquesArray[index][setLanguage]);
-            }
-        }
-        catch(const std::invalid_argument &e)
-        {
-            errorType x;
-            x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
-            throw x;
-        }
-        return result;
     }
 }
 

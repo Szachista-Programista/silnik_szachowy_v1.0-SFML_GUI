@@ -1,9 +1,11 @@
 #include "Play.h"
 
 Play::Play(bool k)noexcept:
-color{k}, chessboard{k}, engine{k}, notebook{k}
+color{k}, chessboard{k}, engine{k}, notebook{k}, menu{k}
 {
     chessboard.drawChessboard();
+    chessboard.drawChessboard();
+    menu.setGameBackground();
 }
 void Play::playWithUser()
 {
@@ -14,6 +16,9 @@ void Play::playWithUser()
 }
     bool Play::userMoveService()
 {
+    chessboard.drawChessboard();
+    chessboard.drawChessboard();
+    menu.setGameBackground();
     firstCoordChoosen = false;
     while(true)
     {
@@ -61,7 +66,26 @@ void Play::playWithUser()
     if(userActionCode == 84 || chessboard.menuButtonPressed)
     {
         chessboard.menuButtonPressed = false;
-        gameOver = chessboard.gameMenu();
+        while(true)
+        {
+            globalType::menuAction = menu.displayGameMenu(isNotationSaved);
+            switch(globalType::menuAction)
+                {
+                    case globalType::backToGame:
+                        return false;
+                    case globalType::mainMenu:
+                        gameOver = true;
+                        return false;
+                    case globalType::saveNotation:
+                        chessboard.saveGameInNotebook();
+                        isNotationSaved = true;
+                        continue;
+                    case globalType::quit:
+                        gameOver = true;
+                        return false;
+                    default: throw std::runtime_error("Wrong menuAction.");
+                }
+        }
     }
     return false;
 }
@@ -84,7 +108,7 @@ void Play::playWithUser()
     if(isUserMakesPromotion())
         userMoveCode += chessboard.promotionMenu() * 10000;
     chessboard.notation = notebook.getNotation(userMoveCode);
-    chessboard.notationSaved = false;
+    isNotationSaved = false;
     updateChessboard(notebook.getChessboardUpdateCode(), true);
     chessboard.drawChessboard();
 }
@@ -126,7 +150,6 @@ void Play::playWithUser()
         chessboard.updateSquare(x, y, piece, pieceColor, underlight);
     }
     chessboard.savePosition();
-    //chessboard.drawChessboard(1);
 }
                 int Play::getPieceCode  (char cHar)
 {
@@ -189,17 +212,38 @@ void Play::playWithUser()
         return false;
     try
     {
-        switch(gameOverParameter)
+        chessboard.drawChessboard();
+        chessboard.drawChessboard();
+        menu.setGameBackground();
+        while(true)
         {
-            case 1:
-                chessboard.gameOverMenu(globalType::userWin);   break;
-            case 2:
-                chessboard.gameOverMenu(globalType::stalemate); break;
-            case 3:
-                chessboard.gameOverMenu(globalType::engineWin); break;
-            case 4:
-                chessboard.gameOverMenu(globalType::stalemate); break;
-            default: throw std::runtime_error("Wrong gameOverParameter.");
+            switch(gameOverParameter)
+            {
+                case 1:
+                    globalType::menuAction = menu.displayGameOverMenu(isNotationSaved, globalType::userWin);   break;
+                case 2:
+                    globalType::menuAction = menu.displayGameOverMenu(isNotationSaved, globalType::stalemate); break;
+                case 3:
+                    globalType::menuAction = menu.displayGameOverMenu(isNotationSaved, globalType::engineWin); break;
+                case 4:
+                    globalType::menuAction = menu.displayGameOverMenu(isNotationSaved, globalType::stalemate); break;
+                default: throw std::runtime_error("Wrong gameOverParameter.");
+            }
+            switch(globalType::menuAction)
+            {
+                case globalType::mainMenu:
+                    return true;
+                case globalType::saveNotation:
+                    chessboard.saveGameInNotebook();
+                    isNotationSaved = true;
+                    break;
+                case globalType::displayPastMovements:
+                    chessboard.displayPastMovements(chessboard.positions.size()-1, true);
+                    break;
+                case globalType::quit:
+                    return true;
+                default: throw std::runtime_error("Wrong menuAction.");
+            }
         }
     }
     catch(const std::runtime_error &e)
@@ -208,5 +252,4 @@ void Play::playWithUser()
         x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
         throw x;
     }
-    return true;
 }
