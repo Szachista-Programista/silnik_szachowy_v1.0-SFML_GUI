@@ -3,20 +3,35 @@
 Menu::Menu(bool k): color{k}
 {
     globalType::readConfigFile();
+    loadFont();
     loadTextures();
 }
-void Menu::loadTextures()
+    void Menu::loadFont()
+{
+    try
+    {
+    if (!font.loadFromFile("fonts/arial.ttf"))
+        throw std::runtime_error("Cannot load arial.ttf");
+    }
+    catch(const std::runtime_error &e)
+    {
+        globalType::errorType x;
+        x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
+        throw x;
+    }
+    text.setFont(font);
+    text.setCharacterSize(55);
+}
+    void Menu::loadTextures()
 {
     loadButtonTextures();
     setButtonSprites();
     loadBoardTextures();
     setBoardSprites();
-    loadPromotionPieceTextures();
-    setPromotionPieceSprites();
     loadbackgroundTexture();
     setbackgroundSprites();
 }
-    void Menu::loadButtonTextures()
+        void Menu::loadButtonTextures()
 {
     try
     {
@@ -38,6 +53,14 @@ void Menu::loadTextures()
         || (!buttonTexture[RightArrow     ].loadFromFile("img/buttons/" + std::to_string(globalType::numberOfButtonTexture) + "/RightArrow.png"))
         || (!buttonTexture[endRightArrow  ].loadFromFile("img/buttons/" + std::to_string(globalType::numberOfButtonTexture) + "/endRightArrow.png"))
         || (!buttonTexture[setButtons     ].loadFromFile("img/buttons/" + std::to_string(globalType::numberOfButtonTexture) + "/setButtons.png"))
+        || (!buttonTexture[whiteKnight    ].loadFromFile("img/pieces/2.png"))
+        || (!buttonTexture[whiteBishop    ].loadFromFile("img/pieces/3.png"))
+        || (!buttonTexture[whiteRook      ].loadFromFile("img/pieces/4.png"))
+        || (!buttonTexture[whiteQueen     ].loadFromFile("img/pieces/5.png"))
+        || (!buttonTexture[blackKnight    ].loadFromFile("img/pieces/8.png"))
+        || (!buttonTexture[blackBishop    ].loadFromFile("img/pieces/9.png"))
+        || (!buttonTexture[blackRook      ].loadFromFile("img/pieces/10.png"))
+        || (!buttonTexture[blackQueen     ].loadFromFile("img/pieces/11.png"))
         || (!buttonTexture[set1           ].loadFromFile("img/buttons/1/set.png"))
         || (!buttonTexture[set2           ].loadFromFile("img/buttons/2/set.png"))
         || (!buttonTexture[set3           ].loadFromFile("img/buttons/3/set.png"))
@@ -53,13 +76,13 @@ void Menu::loadTextures()
         throw x;
     }
 }
-    void Menu::setButtonSprites()
+        void Menu::setButtonSprites()
 {
     for(int i = 0; i < buttonNumbers; i++)
         buttonSprite[i].setTexture(buttonTexture[i]);
     buttonSprite[notationSaved].setColor(sf::Color(0,255,0,255));
 }
-    void Menu::loadBoardTextures()
+        void Menu::loadBoardTextures()
 {
     try
     {
@@ -73,37 +96,11 @@ void Menu::loadTextures()
         throw x;
     }
 }
-    void Menu::setBoardSprites()
+        void Menu::setBoardSprites()
 {
     boardSprite.setTexture(boardTexture);
 }
-    void Menu::loadPromotionPieceTextures()
-{
-    try
-    {
-            if((!promotionPieceTextures[whiteKnight].loadFromFile("img/pieces/2.png"))
-            || (!promotionPieceTextures[whiteBishop].loadFromFile("img/pieces/3.png"))
-            || (!promotionPieceTextures[whiteRook  ].loadFromFile("img/pieces/4.png"))
-            || (!promotionPieceTextures[whiteQueen ].loadFromFile("img/pieces/5.png"))
-            || (!promotionPieceTextures[blackKnight].loadFromFile("img/pieces/8.png"))
-            || (!promotionPieceTextures[blackBishop].loadFromFile("img/pieces/9.png"))
-            || (!promotionPieceTextures[blackRook  ].loadFromFile("img/pieces/10.png"))
-            || (!promotionPieceTextures[blackQueen ].loadFromFile("img/pieces/11.png")))
-                throw std::runtime_error("Cannot read texture.");
-    }
-    catch(const std::runtime_error &e)
-    {
-        globalType::errorType x;
-        x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
-        throw x;
-    }
-}
-    void Menu::setPromotionPieceSprites()
-{
-    for(int i = 0; i < promotionPieceNumbers; i++)
-        promotionPieceSprite[i].setTexture(promotionPieceTextures[i]);
-}
-    void Menu::loadbackgroundTexture()
+        void Menu::loadbackgroundTexture()
 {
     try
     {
@@ -117,14 +114,14 @@ void Menu::loadTextures()
         throw x;
     }
 }
-    void Menu::setbackgroundSprites()
+        void Menu::setbackgroundSprites()
 {
     backgroundSprite.setTexture(backgroundTexture);
     backgroundSprite.setPosition(0, 0);
     backgroundSprite.setScale(static_cast<float>(globalType::windowWidth) / backgroundSprite.getLocalBounds().width, static_cast<float>(globalType::windowHeight) / backgroundSprite.getLocalBounds().height);
 }
 
-    void Menu::setGameBackground()
+void Menu::setGameBackground()
 {
 gameBackgroundTexture.create(globalType::windowWidth, globalType::windowHeight);
 gameBackgroundTexture.update(*globalType::windowPtr);
@@ -214,7 +211,7 @@ gameBackgroundSprite.setColor(sf::Color(160, 130, 100, 255));
         drawMenu(button);
     }
 }
-        globalType::MenuAction Menu::displaySettingsMenu()
+        globalType::MenuAction Menu::m()
 {
     std::vector<Button> button = {setButtons, goBack};
     locateMenuButtons(button);
@@ -295,6 +292,8 @@ gameBackgroundSprite.setColor(sf::Color(160, 130, 100, 255));
 {
     isNotationSaved = notation;
     std::vector<Button> button = {mainMenu, (isNotationSaved? notationSaved: saveNotation), watchPlayedGame};
+    std::string gameOverCause = setNoteContent(gameResult);
+
     locateMenuButtons(button);
     while (globalType::windowPtr->isOpen())
     {
@@ -334,7 +333,16 @@ gameBackgroundSprite.setColor(sf::Color(160, 130, 100, 255));
                 locateMenuButtons(button);
             }
         }
-        drawMenu(button, true);
+        drawMenu(button, true, gameOverCause);
+    }
+}
+        std::string Menu::setNoteContent(globalType::GameResult gameResult)
+{
+    switch (gameResult)
+    {
+        case globalType::engineWin: text.setFillColor(sf::Color(80, 0, 0)); return "Game Over - engine win!";
+        case globalType::stalemate: text.setFillColor(sf::Color(80, 0, 0)); return "Game Over - stalemate.";
+        case globalType::userWin:   text.setFillColor(sf::Color(0, 80, 0)); return "Game Over - You win!";
     }
 }
     globalType::MenuAction Menu::displayGameMenu(bool notation)
@@ -381,7 +389,58 @@ gameBackgroundSprite.setColor(sf::Color(160, 130, 100, 255));
         drawMenu(button, true);
     }
 }
-
+    globalType::MenuAction Menu::displayPromotionMenuMenu()
+{
+    std::vector<Button> button = (color ? std::vector<Button>{whiteKnight, whiteBishop, whiteRook, whiteQueen} : std::vector<Button>{blackKnight, blackBishop, blackRook, blackQueen});
+    locatePromotionMenuButtons(button);
+    while (globalType::windowPtr->isOpen())
+    {
+        checkWindowSize();
+        sf::Event event;
+        while (globalType::windowPtr->pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+            {
+                globalType::windowPtr->close();
+                return globalType::quit;
+            }
+            if (event.type == sf::Event::MouseMoved)
+                updateMenuButtons(button, true);
+            if (event.type == sf::Event::MouseButtonPressed)
+            {
+                for (int i = 0; i < button.size(); i++)
+                {
+                    sf::FloatRect buttonBounds = buttonSprite[button[i]].getGlobalBounds();
+                    if (buttonBounds.contains(sf::Vector2f(event.mouseButton.x, event.mouseButton.y)))
+                        switch(i)
+                        {
+                            case 0: return globalType::knight;
+                            case 1: return globalType::bishop;
+                            case 2: return globalType::rook;
+                            case 3: return globalType::queen;
+                        }
+                }
+            }
+        }
+        drawMenu(button, true);
+    }
+}
+        void Menu::locatePromotionMenuButtons(std::vector<Button> button)
+{
+    for (int i = 0; i < button.size(); i++)
+        buttonSprite[button[i]].setOrigin(50.0f, 50.0f);
+    float buttonSize  = globalType::windowHeight * 0.16f;
+    float buttonSpace =  globalType::windowHeight * 0.02f;
+    float allButtosWidth = 3.0f * buttonSize + 3.0f * buttonSpace;
+    float allButtosXPosition = globalType::windowWidth / 2.0f - allButtosWidth / 2.0f;
+    float buttonYPosition = globalType::windowHeight / 2.0f;
+    promotionButtonScale = buttonSize  / buttonTexture[whiteKnight].getSize().x;
+    for(int i=0; i < button.size(); i++)
+    {
+        buttonSprite[button[i]].setPosition(allButtosXPosition + i * (buttonSize + buttonSpace), buttonYPosition);
+        buttonSprite[button[i]].setScale(promotionButtonScale, promotionButtonScale);
+    }
+}
 
 
 void Menu::locateMenuButtons(std::vector<Button> button)
@@ -394,8 +453,8 @@ void Menu::locateMenuButtons(std::vector<Button> button)
     float allButtosHeight = (button.size() - 1) * (buttonHeight + buttonsSpace);
     float buttonXPosition = globalType::windowWidth / 2.0f;
     float allButtosYPosition = globalType::windowHeight / 2.0f - allButtosHeight / 2.0f;
-    buttonScaleX = buttonWidth  / buttonTexture[0].getSize().x;
-    buttonScaleY = buttonHeight / buttonTexture[0].getSize().y;
+    buttonScaleX = buttonWidth  / buttonTexture[goBack].getSize().x;
+    buttonScaleY = buttonHeight / buttonTexture[goBack].getSize().y;
     for(int i=0; i < button.size(); i++)
     {
         buttonSprite[button[i]].setPosition(buttonXPosition, allButtosYPosition + i * (buttonHeight + buttonsSpace));
@@ -411,33 +470,45 @@ void Menu::locateMenuButtons(std::vector<Button> button)
         buttonSprite[notationSaved].setTexture(buttonTexture[notationSaved]);
     }
 }
-void Menu::updateMenuButtons(std::vector<Button> button)
+void Menu::updateMenuButtons(std::vector<Button> button, bool promotionMenu)
 {
+    float scaleX = promotionMenu? promotionButtonScale: buttonScaleX;
+    float scaleY = promotionMenu? promotionButtonScale: buttonScaleY;
     for (int i = 0; i < button.size(); i++)
     {
         if(button[i] == notationSaved && isNotationSaved)
             continue;
         sf::FloatRect buttonBounds = buttonSprite[button[i]].getGlobalBounds();
         if (buttonBounds.contains(sf::Mouse::getPosition(*(globalType::windowPtr)).x, sf::Mouse::getPosition(*(globalType::windowPtr)).y))
-            buttonSprite[button[i]].setScale(buttonScaleX * 1.15f, buttonScaleY * 1.15f);
+            buttonSprite[button[i]].setScale(scaleX * 1.15f, scaleY * 1.15f);
         else
-            buttonSprite[button[i]].setScale(buttonScaleX, buttonScaleY);
+            buttonSprite[button[i]].setScale(scaleX, scaleY);
     }
 }
-void Menu::drawMenu(std::vector<Button> button, bool gameBackground)
+void Menu::drawMenu(std::vector<Button> button, bool gameBackground, std::string note)
 {
     globalType::windowPtr->clear();
     if(gameBackground)
     {
         globalType::windowPtr->draw(gameBackgroundSprite);
-drawOverlay();
-
+        drawOverlay();
     }
     else
         globalType::windowPtr->draw(backgroundSprite);
     for (int i = 0; i < button.size(); i++)
         globalType::windowPtr->draw(buttonSprite[button[i]]);
+    if(note != "")
+        drawNote(note);
     globalType::windowPtr->display();
+}
+    void Menu::drawNote(std::string note)
+{
+        text.setString(note);
+        sf::FloatRect textBounds = text.getGlobalBounds();
+        text.setOrigin(textBounds.width / 2, textBounds.height / 2);
+        text.setPosition(globalType::windowWidth / 2, globalType::windowHeight / 6);
+        globalType::windowPtr->draw(text);
+
 }
 void Menu::checkWindowSize()
 {
@@ -447,11 +518,11 @@ void Menu::checkWindowSize()
         globalType::windowPtr->setSize({globalType::windowWidth, globalType::windowHeight});
     }
 }
-
-
 void Menu::drawOverlay()
 {
     sf::RectangleShape overlay(sf::Vector2f(globalType::windowWidth, globalType::windowHeight));
     overlay.setFillColor(sf::Color(160, 130, 100, 150));
     globalType::windowPtr->draw(overlay);
 }
+
+

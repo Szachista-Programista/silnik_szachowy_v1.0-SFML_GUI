@@ -92,7 +92,11 @@ namespace globalType{
         watchPlayedGame,
         white,
         quit,
-        displayPastMovements
+        displayPastMovements,
+        knight,
+        bishop,
+        rook,
+        queen
     } extern menuAction;
     
     using chessboardPointer = char(*)[8];

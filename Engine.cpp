@@ -199,7 +199,7 @@ bool Engine::canUserMakeSuchMove(int userMoveCode)
     try
     {
         if (u.fromX < 0 || 7 < u.fromX || u.fromY < 0 || 7 < u.fromY || u.toX < 0 || 7 < u.toX || u.toY < 0 || 7 < u.toY)
-            throw std::runtime_error("User movement coordinates out of range.");  
+            throw std::runtime_error("User movement coordinates out of range.");
         if (workingChessboardPointer == nullptr)
             throw std::runtime_error("Nullptr of the chessboard.");
         switch(workingChessboardPointer[u.fromY][u.fromX])
@@ -316,7 +316,7 @@ bool Engine::canUserMakeSuchMove(int userMoveCode)
     if(u.toY+1<=7                ? ptr_X[u.toY+1][u.toX  ] != 'K': true)
     if(u.toY+1<=7 && 0<=u.toX-1  ? ptr_X[u.toY+1][u.toX-1] != 'K': true)
     if(              0<=u.toX-1  ? ptr_X[u.toY  ][u.toX-1] != 'K': true)
-    if(u.toY+1<=7 && 0<=u.toX-1  ? ptr_X[u.toY+1][u.toX-1] != 'K': true)
+    if(0<=u.toY-1 && 0<=u.toX-1  ? ptr_X[u.toY-1][u.toX-1] != 'K': true)
         return true;
     if(u.fromY==u.toY && abs(u.fromX - u.toX) == 2 && movement.userKingMoved==false)//castle
     {
@@ -616,7 +616,7 @@ int Engine::makeMove                         (int userMoveCode)
             }
             else if(workingChessboardPointer[5][2]=='N')
                                    { workingChessboardPointer[7][6]=' '; workingChessboardPointer[5][5]='N'; }
-            else                                        
+            else
                                    { workingChessboardPointer[7][1]=' '; workingChessboardPointer[5][2]='N'; }
             break;
         case 3:
@@ -834,7 +834,7 @@ int Engine::makeMove                         (int userMoveCode)
     markEngineMoveOnChessboard(); //          comparativeChessboardPointer = workingChessboardPointer
     return engineMoveCode + isItGameOver();
 }
-        void Engine::findEngineMove()noexcept 
+        void Engine::findEngineMove()noexcept
 {
     if(workingChessboardPointer == nullptr)
         return;

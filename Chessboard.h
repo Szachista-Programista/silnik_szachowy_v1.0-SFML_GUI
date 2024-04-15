@@ -96,23 +96,11 @@ public:////////////////////////////////
     void offUnderlights();
     void underlight(int coordonates);
     void checkWindowSize();
-    int promotionMenu();
-        void loadPromotionMenuTextures(sf::Sprite button[]);
-        void locatePromotionMenuTextures(sf::Sprite button[]);
-        void updatePromotionMenuButtons(sf::Sprite button[]);
-        void drawPromotionMenu(sf::Sprite button[]);
-            void drawOverlay();
     void savePosition();
-    globalType::chessboardPointer copyChessboard(const globalType::chessboardPointer oryginal);
-    globalType::chessboardUnderlightPointer copyChessboardUnderlight(const globalType::chessboardUnderlightPointer oryginal);
-
-
+        globalType::chessboardPointer copyChessboard(const globalType::chessboardPointer oryginal);
+        globalType::chessboardUnderlightPointer copyChessboardUnderlight(const globalType::chessboardUnderlightPointer oryginal);
     void saveGameInNotebook();
-
-
-
     void displayPastMovements(int NumberOfMove, bool afterGame);
-
 //******************************************************************************************************
     enum Pieces{
         no,

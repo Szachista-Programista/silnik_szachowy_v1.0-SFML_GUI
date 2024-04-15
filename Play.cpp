@@ -54,16 +54,18 @@ void Play::playWithUser()
         bool Play::userActionService()
 {
     userActionCode = chessboard.getUserAction();
-    if(0 <= userActionCode && userActionCode <= 77)
+    if(-1 == userActionCode)
+        gameOver = true;
+    else if(0 <= userActionCode && userActionCode <= 77)
     {
         chosenCoordinates = userActionCode;
         return true;
     }
-    if(80 == userActionCode)
+    else if(80 == userActionCode)
         chessboard.displayPastMovements(1, false);
-    if(81 == userActionCode)
+    else if(81 == userActionCode)
         chessboard.displayPastMovements(chessboard.positions.size()-2, false);
-    if(userActionCode == 84 || chessboard.menuButtonPressed)
+    else if(userActionCode == 84 || chessboard.menuButtonPressed)
     {
         chessboard.menuButtonPressed = false;
         while(true)
@@ -106,7 +108,13 @@ void Play::playWithUser()
         void Play::secondCoordService()
 {
     if(isUserMakesPromotion())
-        userMoveCode += chessboard.promotionMenu() * 10000;
+        switch (menu.displayPromotionMenuMenu())
+        {
+            case globalType::knight: userMoveCode += 10000; break;
+            case globalType::bishop: userMoveCode += 20000; break;
+            case globalType::rook:   userMoveCode += 30000; break;
+            case globalType::queen:  userMoveCode += 40000; break;
+        }
     chessboard.notation = notebook.getNotation(userMoveCode);
     isNotationSaved = false;
     updateChessboard(notebook.getChessboardUpdateCode(), true);
