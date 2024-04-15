@@ -24,6 +24,7 @@ namespace globalType{
 
     sf::RenderWindow *windowPtr;
 
+    bool windowResized;
     float windowWidth;
     float windowHeight;
 

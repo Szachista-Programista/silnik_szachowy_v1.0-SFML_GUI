@@ -3,14 +3,19 @@
 int main() {
     globalType::windowHeight = 750;
     globalType::windowWidth  = 1000;
-    try
+    do
     {
+        globalType::windowResized = false;
         Game game;
-        game.run();
+        try
+        { 
+            game.run();
+        }
+        catch(globalType::errorType &e)
+        {
+            std::cout<<e.errorMessage;
+        }        
     }
-    catch(globalType::errorType &e)
-    {
-        std::cout<<e.errorMessage;
-    }
+    while(globalType::windowResized);
     return 0;
 }

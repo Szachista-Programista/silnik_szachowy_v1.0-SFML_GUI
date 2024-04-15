@@ -103,6 +103,7 @@ namespace globalType{
     using chessboardUnderlightPointer = bool(*)[8];
     struct errorType{std::string errorMessage;};
 
+    extern bool windowResized;
     extern float windowWidth;
     extern float windowHeight;
 

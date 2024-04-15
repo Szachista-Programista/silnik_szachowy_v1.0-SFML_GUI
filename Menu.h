@@ -26,7 +26,7 @@ public://////////////////
         RightArrow,
         endRightArrow,
         setButtons,
-        setWindowSize,////
+        setWindowSize,
         whiteKnight,
         whiteBishop,
         whiteRook,
@@ -85,6 +85,7 @@ public://////////////////
         globalType::MenuAction displayPlayMenu();
         globalType::MenuAction displaySettingsMenu();
             globalType::MenuAction displayButtonSettings();
+            globalType::MenuAction displayWindowSizeSettings();
     globalType::MenuAction displayGameOverMenu(bool notation, globalType::GameResult gameResult);
         std::string setNoteContent(globalType::GameResult gameResult);
     globalType::MenuAction displayGameMenu(bool notation);

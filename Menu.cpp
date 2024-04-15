@@ -20,7 +20,7 @@ Menu::Menu(bool k): color{k}
         throw x;
     }
     text.setFont(font);
-    text.setCharacterSize(55);
+    text.setCharacterSize((int)(globalType::windowHeight/14));
 }
     void Menu::loadTextures()
 {
@@ -53,6 +53,7 @@ Menu::Menu(bool k): color{k}
         || (!buttonTexture[RightArrow     ].loadFromFile("img/buttons/" + std::to_string(globalType::numberOfButtonTexture) + "/RightArrow.png"))
         || (!buttonTexture[endRightArrow  ].loadFromFile("img/buttons/" + std::to_string(globalType::numberOfButtonTexture) + "/endRightArrow.png"))
         || (!buttonTexture[setButtons     ].loadFromFile("img/buttons/" + std::to_string(globalType::numberOfButtonTexture) + "/setButtons.png"))
+        || (!buttonTexture[setWindowSize  ].loadFromFile("img/buttons/" + std::to_string(globalType::numberOfButtonTexture) + "/setWindowSize.png"))
         || (!buttonTexture[whiteKnight    ].loadFromFile("img/pieces/2.png"))
         || (!buttonTexture[whiteBishop    ].loadFromFile("img/pieces/3.png"))
         || (!buttonTexture[whiteRook      ].loadFromFile("img/pieces/4.png"))
@@ -211,9 +212,9 @@ gameBackgroundSprite.setColor(sf::Color(160, 130, 100, 255));
         drawMenu(button);
     }
 }
-        globalType::MenuAction Menu::m()
+        globalType::MenuAction Menu::displaySettingsMenu()
 {
-    std::vector<Button> button = {setButtons, goBack};
+    std::vector<Button> button = {setButtons, setWindowSize, goBack};
     locateMenuButtons(button);
     while (globalType::windowPtr->isOpen())
     {
@@ -242,6 +243,13 @@ gameBackgroundSprite.setColor(sf::Color(160, 130, 100, 255));
                                 else
                                     return globalType::menuAction;
                             case 1:
+                                text.setFillColor(sf::Color::White);
+                                globalType::menuAction = displayWindowSizeSettings();
+                                if(globalType::menuAction == globalType::goBack)
+                                    break;
+                                else
+                                    return globalType::menuAction;
+                            case 2:
                                 return globalType::goBack;
                         }
                 }
@@ -285,6 +293,71 @@ gameBackgroundSprite.setColor(sf::Color(160, 130, 100, 255));
             }
         }
         drawMenu(button);
+    }
+
+}
+            globalType::MenuAction Menu::displayWindowSizeSettings()
+{
+    std::vector<Button> button = {goBack};
+    float width;
+    float height;
+    locateMenuButtons(button);
+    while (globalType::windowPtr->isOpen())
+    {
+        sf::Event event;
+        while (globalType::windowPtr->pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+            {
+                globalType::windowPtr->close();
+                return globalType::quit;
+            }
+            if (event.type == sf::Event::Resized)
+            {
+                globalType::windowResized = true;
+                width  = event.size.width;
+                height = event.size.height;
+                if(width < 500 || height < 375)
+                {
+                    globalType::windowWidth  = 500;
+                    globalType::windowHeight = 375;
+                }
+                else if(height == globalType::windowHeight)
+                {
+                    globalType::windowWidth  = width;
+                    globalType::windowHeight = width * 0.75;
+                }
+                else if(width == globalType::windowWidth)
+                {
+                    globalType::windowWidth  = height / 0.75;
+                    globalType::windowHeight = height;
+                }
+                else if(height / width > 0.75)
+                {
+                    globalType::windowWidth  = width;
+                    globalType::windowHeight = width * 0.75;
+                }
+                else if(height / width < 0.75)
+                {
+                    globalType::windowWidth  = height / 0.75;
+                    globalType::windowHeight = height;
+                }
+                globalType::windowPtr->close();
+                return globalType::quit;
+            }
+            if (event.type == sf::Event::MouseMoved)
+                updateMenuButtons(button);
+            if (event.type == sf::Event::MouseButtonPressed) {
+                for (int i = 0; i < button.size(); i++)
+                {
+                    sf::FloatRect buttonBounds = buttonSprite[button[i]].getGlobalBounds();
+                    if (buttonBounds.contains(sf::Vector2f(event.mouseButton.x, event.mouseButton.y)))
+                        return globalType::goBack;
+                }
+                locateMenuButtons(button);
+            }
+        }
+        drawMenu(button, false, "Set window size.");
     }
 
 }
@@ -442,14 +515,13 @@ gameBackgroundSprite.setColor(sf::Color(160, 130, 100, 255));
     }
 }
 
-
 void Menu::locateMenuButtons(std::vector<Button> button)
 {
     for (int i = 0; i < button.size(); i++)
         buttonSprite[button[i]].setOrigin(300.0f, 62.0f);
-    float buttonWidth  = 250.0f;
-    float buttonHeight =  50.0f;
-    float buttonsSpace =  50.0f;
+    float buttonWidth  = globalType::windowHeight / 3;
+    float buttonHeight =  buttonWidth / 5;
+    float buttonsSpace =  buttonHeight;
     float allButtosHeight = (button.size() - 1) * (buttonHeight + buttonsSpace);
     float buttonXPosition = globalType::windowWidth / 2.0f;
     float allButtosYPosition = globalType::windowHeight / 2.0f - allButtosHeight / 2.0f;
