@@ -1,11 +1,15 @@
 #ifndef MENU_H
 #define MENU_H
-
 #include "GlobalDefinitions.h"
 #include <SFML/Graphics.hpp>
-
+/**
+ * @brief The "Menu" class is responsible for displaying various menus in the game window,
+ * including the main menu, settings, promotion selection menu (during pawn promotion),
+ * user choices, button settings, in-game menu, endgame menu, etc. It handles the rendering and
+ * interaction logic for these menus, allowing users to navigate and make selections.
+ */
 class Menu{
-public://////////////////
+public:
 
     enum Button{
         goBack,

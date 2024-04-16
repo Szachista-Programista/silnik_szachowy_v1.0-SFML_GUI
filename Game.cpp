@@ -28,6 +28,3 @@ int  Game::randomColor()noexcept
     srand(static_cast<unsigned int>(time(nullptr)));
     return rand() % 2;
 }
-
-
-

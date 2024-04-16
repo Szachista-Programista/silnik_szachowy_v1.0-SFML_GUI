@@ -610,13 +610,15 @@ void Chessboard::saveGameInNotebook()
     }
     file.close();
 }
-void Chessboard::displayPastMovements(int numberOfMove, bool afterGame)
+bool Chessboard::displayPastMovements(int numberOfMove, bool afterGame)
 {
     int action;
     while(true)
     {
         action = getUserAction(numberOfMove);
-        if(action == 80)
+        if(action == -1)
+            return true;
+        else if(action == 80)
             numberOfMove = 1;
         else if(action == 81 && 1 < numberOfMove)
             numberOfMove--;
@@ -627,11 +629,11 @@ void Chessboard::displayPastMovements(int numberOfMove, bool afterGame)
         else if(action == 84 && !afterGame)
         {
             menuButtonPressed = true;
-            return;
+            return false;
         }
         else if(action == 84 && afterGame)
-            return;
+            return false;
         if(numberOfMove == positions.size() -1 && !afterGame)
-            return;
+            return false;
     }
 }

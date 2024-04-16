@@ -6,25 +6,28 @@
 #include "Notebook.h"
 #include "Menu.h"
 /**
- * @brief
+ * @brief Class responsible for managing a single game session. It interacts with classes such as
+ * Chessboard, Engine, Notebook, and Menu to display appropriate menus during the game,
+ * check for game termination conditions, and communicate between these subordinate classes.
+ * Primarily, it serves as the game loop, alternately handling user input and
+ * generating moves by the engine.
  */
 class Play{
-    bool color;
-    bool correctMovementMade;
-    bool firstCoordChoosen;
-    bool gameOver = false;
-    int engineMoveCode;
-    int userMoveCode;
-    int chosenCoordinates;
-    int userActionCode;
+        bool color;
+        bool correctMovementMade;
+        bool firstCoordChoosen;
+        bool gameOver = false;
+        bool isNotationSaved = false;
 
-    Chessboard chessboard;
-    Engine     engine;
-    Notebook   notebook;
-    Menu       menu;
+        int engineMoveCode;
+        int userMoveCode;
+        int chosenCoordinates;
+        int userActionCode;
 
-    bool isNotationSaved = false;
-
+        Chessboard chessboard;
+        Engine     engine;
+        Notebook   notebook;
+        Menu       menu;
 //********************************************************************************
 public: Play(bool k)noexcept;
         void playWithUser();
@@ -34,12 +37,10 @@ private:    bool userMoveService();
                 void firstCoordService();
                 void secondCoordService();
                     bool isUserMakesPromotion()noexcept;
-                        void updateChessboard(std::string updateCode, bool underlight);
-                            int  getPieceCode (char cHar);
-                            bool getPieceColor(char cHar);
+                    void updateChessboard(std::string updateCode, bool underlight);
+                        int  getPieceCode (char cHar);
+                        bool getPieceColor(char cHar);
             bool engineMoveService(int moveCode);
                 bool isItGameover();
-
-
 };
 #endif//PLAY_H

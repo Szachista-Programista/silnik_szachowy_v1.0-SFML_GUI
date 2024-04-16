@@ -25,13 +25,14 @@ namespace globalType{
     sf::RenderWindow *windowPtr;
 
     bool windowResized;
-    float windowWidth;
-    float windowHeight;
+    float windowWidth  = 1000;
+    float windowHeight = 750;
 
     MenuAction menuAction;
 
     int numberOfButtonTexture;
     int numberOfBoardTexture;
+    
     Languages setLanguage;
     GameStage gameStage;
     KindOfEndgame choosenEndgame;

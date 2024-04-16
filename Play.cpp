@@ -62,9 +62,9 @@ void Play::playWithUser()
         return true;
     }
     else if(80 == userActionCode)
-        chessboard.displayPastMovements(1, false);
+        gameOver = chessboard.displayPastMovements(1, false);
     else if(81 == userActionCode)
-        chessboard.displayPastMovements(chessboard.positions.size()-2, false);
+        gameOver = chessboard.displayPastMovements(chessboard.positions.size()-2, false);
      if(userActionCode == 84 || chessboard.menuButtonPressed)
     {
         chessboard.menuButtonPressed = false;

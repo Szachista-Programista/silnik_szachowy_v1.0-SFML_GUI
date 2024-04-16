@@ -1,8 +1,6 @@
 #include "Game.h"
 
 int main() {
-    globalType::windowHeight = 750;
-    globalType::windowWidth  = 1000;
     do
     {
         globalType::windowResized = false;
