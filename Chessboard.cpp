@@ -16,10 +16,19 @@ Chessboard::Chessboard(bool k): color{k}
 }
     void Chessboard::loadFonts()
 {
+    try
+    {
     if (!normalFont.loadFromFile("fonts/arial.ttf"))
-        std::cerr << "Cannot load arial.ttf" << std::endl;
+        throw std::runtime_error("Cannot load arial.ttf");
     if (!boldFont.loadFromFile("fonts/arial_bold.ttf"))
-        std::cerr << "Cannot load arial_bold.ttf" << std::endl;
+        throw std::runtime_error("Cannot load arial_bold.ttf");
+    }
+    catch(const std::runtime_error &e)
+    {
+        globalType::errorType x;
+        x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
+        throw x;
+    }
 }
     void Chessboard::setNotationParameters()
 {
@@ -45,23 +54,33 @@ Chessboard::Chessboard(bool k): color{k}
 }
         void Chessboard::loadBackgroundTexture()
 {
-    if (!backgroundTexture.loadFromFile("img/other/background.png"))
-        std::cerr << "Failed to load texture!" << std::endl;
+    try
+    {
+        if (!backgroundTexture.loadFromFile("img/background/1.png"))
+            throw std::runtime_error("Cannot read texture.");
+    }
+    catch(const std::runtime_error &e)
+    {
+        globalType::errorType x;
+        x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
+        throw x;
+    }
     background.setTexture(backgroundTexture);
     background.setPosition(0, 0);
     background.setScale(globalType::windowWidth / background.getLocalBounds().width, globalType::windowHeight / background.getLocalBounds().height);
 }
         void Chessboard::loadBoardTexture()
 {
-    if(color)
+    try
     {
-        if (!boardTexture.loadFromFile("img/other/whiteSideBoard.png"))
-            std::cerr << "Failed to load chessboard texture!" << std::endl;
+        if (!boardTexture.loadFromFile("img/board/" + std::to_string(globalType::numberOfBoardTexture) + (color? "/whiteSide.png": "/blackSide.png")))
+            throw std::runtime_error("Cannot read texture.");
     }
-    else
+    catch(const std::runtime_error &e)
     {
-        if (!boardTexture.loadFromFile("img/other/blackSideBoard.png"))
-            std::cerr << "Failed to load chessboard texture!" << std::endl;
+        globalType::errorType x;
+        x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
+        throw x;
     }
     board.setTexture(boardTexture);
     board.setPosition(marginSize, marginSize);
@@ -69,17 +88,35 @@ Chessboard::Chessboard(bool k): color{k}
 }
         void Chessboard::loadPieceTextures()
 {
-    for (int i = 0; i < 12; i++)
-        if (!pieceTextures[i].loadFromFile("img/pieces/" + std::to_string(i+1) + ".png"))
-            std::cerr << "Failed to load piece texture " << i << "!" << std::endl;
+    try
+    {
+        for (int i = 0; i < 12; i++)
+            if (!pieceTextures[i].loadFromFile("img/pieces/" + std::to_string(i+1) + ".png"))
+                throw std::runtime_error("Cannot read texture.");
+    }
+    catch(const std::runtime_error &e)
+    {
+        globalType::errorType x;
+        x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
+        throw x;
+    }
     piece.setScale(squareScale, squareScale);
 }
         void Chessboard::loadUnderlightTextures()
 {
+    try
+    {
     if (!redUnderlightTexture.loadFromFile("img/pieces/red.png"))
-        std::cerr << "Failed to load chessboard texture!" << std::endl;
+        throw std::runtime_error("Cannot read texture.");
     if (!blueUnderlightTexture.loadFromFile("img/pieces/blue.png"))
-        std::cerr << "Failed to load chessboard texture!" << std::endl;
+        throw std::runtime_error("Cannot read texture.");
+    }
+    catch(const std::runtime_error &e)
+    {
+        globalType::errorType x;
+        x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
+        throw x;
+    }
     redUnderlight.setTexture(redUnderlightTexture);
     blueUnderlight.setTexture(blueUnderlightTexture);
     redUnderlight.setScale(squareScale, squareScale);
@@ -87,16 +124,21 @@ Chessboard::Chessboard(bool k): color{k}
 }
         void Chessboard::loadButtonsTextures()
 {
-    if (!arrowButtonTextures[0].loadFromFile("img/buttons/" + std::to_string(globalType::numberOfButtonTexture) + "/endLeftArrow.png"))
-        std::cerr << "Failed to load texture!" << std::endl;
-    if (!arrowButtonTextures[1].loadFromFile("img/buttons/" + std::to_string(globalType::numberOfButtonTexture) + "/leftArrow.png"))
-        std::cerr << "Failed to load texture!" << std::endl;
-    if (!arrowButtonTextures[2].loadFromFile("img/buttons/" + std::to_string(globalType::numberOfButtonTexture) + "/rightArrow.png"))
-        std::cerr << "Failed to load texture!" << std::endl;
-    if (!arrowButtonTextures[3].loadFromFile("img/buttons/" + std::to_string(globalType::numberOfButtonTexture) + "/endRightArrow.png"))
-        std::cerr << "Failed to load texture!" << std::endl;
-    if (!menuButtonTexture.loadFromFile("img/buttons/" + std::to_string(globalType::numberOfButtonTexture) + "/menu.png"))
-        std::cerr << "Failed to load texture!" << std::endl;
+    try
+    {
+        if((!arrowButtonTextures[0].loadFromFile("img/buttons/" + std::to_string(globalType::numberOfButtonTexture) + "/endLeftArrow.png"))
+        || (!arrowButtonTextures[1].loadFromFile("img/buttons/" + std::to_string(globalType::numberOfButtonTexture) + "/leftArrow.png"))
+        || (!arrowButtonTextures[2].loadFromFile("img/buttons/" + std::to_string(globalType::numberOfButtonTexture) + "/rightArrow.png"))
+        || (!arrowButtonTextures[3].loadFromFile("img/buttons/" + std::to_string(globalType::numberOfButtonTexture) + "/endRightArrow.png"))
+        || (!menuButtonTexture.loadFromFile     ("img/buttons/" + std::to_string(globalType::numberOfButtonTexture) + "/menu.png")))
+            throw std::runtime_error("Cannot read texture.");
+    }
+    catch(const std::runtime_error &e)
+    {
+        globalType::errorType x;
+        x.errorMessage = __PRETTY_FUNCTION__ + std::string(" >> error: ") + e.what();
+        throw x;
+    }
 
     arrowButtonScale = notationWidth * 0.2f / arrowButtonTextures[0].getSize().x;
     for(int i = 0; i < 4; i++)

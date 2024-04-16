@@ -56,7 +56,7 @@ void Play::playWithUser()
     userActionCode = chessboard.getUserAction();
     if(-1 == userActionCode)
         gameOver = true;
-    else if(0 <= userActionCode && userActionCode <= 77)
+     if(0 <= userActionCode && userActionCode <= 77)
     {
         chosenCoordinates = userActionCode;
         return true;
@@ -65,7 +65,7 @@ void Play::playWithUser()
         chessboard.displayPastMovements(1, false);
     else if(81 == userActionCode)
         chessboard.displayPastMovements(chessboard.positions.size()-2, false);
-    else if(userActionCode == 84 || chessboard.menuButtonPressed)
+     if(userActionCode == 84 || chessboard.menuButtonPressed)
     {
         chessboard.menuButtonPressed = false;
         while(true)

@@ -31,7 +31,6 @@ namespace globalType{
     MenuAction menuAction;
 
     int numberOfButtonTexture;
-    int numberOfBackgroundTexture;
     int numberOfBoardTexture;
     Languages setLanguage;
     GameStage gameStage;
@@ -60,14 +59,12 @@ namespace globalType{
         reading.close();
 
         numberOfButtonTexture     = static_cast<int>(data[0] - '0');
-        numberOfBackgroundTexture = static_cast<int>(data[1] - '0');
-        numberOfBoardTexture      = static_cast<int>(data[2] - '0');
+        numberOfBoardTexture      = static_cast<int>(data[1] - '0');
     }
     void writeConfigFile()
     {
         std::string data{};
         data += static_cast<char>(numberOfButtonTexture     + '0');
-        data += static_cast<char>(numberOfBackgroundTexture + '0');
         data += static_cast<char>(numberOfBoardTexture      + '0');
 
         std::ofstream file("config.txt");

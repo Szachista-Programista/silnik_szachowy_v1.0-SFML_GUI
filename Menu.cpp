@@ -54,6 +54,7 @@ Menu::Menu(bool k): color{k}
         || (!buttonTexture[endRightArrow  ].loadFromFile("img/buttons/" + std::to_string(globalType::numberOfButtonTexture) + "/endRightArrow.png"))
         || (!buttonTexture[setButtons     ].loadFromFile("img/buttons/" + std::to_string(globalType::numberOfButtonTexture) + "/setButtons.png"))
         || (!buttonTexture[setWindowSize  ].loadFromFile("img/buttons/" + std::to_string(globalType::numberOfButtonTexture) + "/setWindowSize.png"))
+        || (!buttonTexture[setBoardTexture].loadFromFile("img/buttons/" + std::to_string(globalType::numberOfButtonTexture) + "/setBoardTexture.png"))
         || (!buttonTexture[whiteKnight    ].loadFromFile("img/pieces/2.png"))
         || (!buttonTexture[whiteBishop    ].loadFromFile("img/pieces/3.png"))
         || (!buttonTexture[whiteRook      ].loadFromFile("img/pieces/4.png"))
@@ -62,6 +63,10 @@ Menu::Menu(bool k): color{k}
         || (!buttonTexture[blackBishop    ].loadFromFile("img/pieces/9.png"))
         || (!buttonTexture[blackRook      ].loadFromFile("img/pieces/10.png"))
         || (!buttonTexture[blackQueen     ].loadFromFile("img/pieces/11.png"))
+        || (!buttonTexture[boardMiniature1].loadFromFile("img/board/1/miniature.png"))
+        || (!buttonTexture[boardMiniature2].loadFromFile("img/board/2/miniature.png"))
+        || (!buttonTexture[boardMiniature3].loadFromFile("img/board/3/miniature.png"))
+        || (!buttonTexture[boardMiniature4].loadFromFile("img/board/4/miniature.png"))
         || (!buttonTexture[set1           ].loadFromFile("img/buttons/1/set.png"))
         || (!buttonTexture[set2           ].loadFromFile("img/buttons/2/set.png"))
         || (!buttonTexture[set3           ].loadFromFile("img/buttons/3/set.png"))
@@ -105,7 +110,7 @@ Menu::Menu(bool k): color{k}
 {
     try
     {
-        if(!backgroundTexture.loadFromFile("img/background/" + std::to_string(globalType::numberOfBackgroundTexture) + ".png"))
+        if(!backgroundTexture.loadFromFile("img/background/1.png"))
             throw std::runtime_error("Cannot read texture.");
     }
     catch(const std::runtime_error &e)
@@ -146,7 +151,7 @@ gameBackgroundSprite.setColor(sf::Color(160, 130, 100, 255));
                 return globalType::quit;
             }
             if (event.type == sf::Event::MouseMoved)
-                updateMenuButtons(button);
+                updateMenuButtons(button, buttonScaleX, buttonScaleY);
             if (event.type == sf::Event::MouseButtonPressed) {
                 for (int i = 0; i < button.size(); i++)
                 {
@@ -192,7 +197,7 @@ gameBackgroundSprite.setColor(sf::Color(160, 130, 100, 255));
                 return globalType::quit;
             }
             if (event.type == sf::Event::MouseMoved)
-                updateMenuButtons(button);
+                updateMenuButtons(button, buttonScaleX, buttonScaleY);
             if (event.type == sf::Event::MouseButtonPressed) {
                 for (int i = 0; i < button.size(); i++)
                 {
@@ -214,7 +219,7 @@ gameBackgroundSprite.setColor(sf::Color(160, 130, 100, 255));
 }
         globalType::MenuAction Menu::displaySettingsMenu()
 {
-    std::vector<Button> button = {setButtons, setWindowSize, goBack};
+    std::vector<Button> button = {setButtons, setWindowSize, setBoardTexture, goBack};
     locateMenuButtons(button);
     while (globalType::windowPtr->isOpen())
     {
@@ -228,7 +233,7 @@ gameBackgroundSprite.setColor(sf::Color(160, 130, 100, 255));
                 return globalType::quit;
             }
             if (event.type == sf::Event::MouseMoved)
-                updateMenuButtons(button);
+                updateMenuButtons(button, buttonScaleX, buttonScaleY);
             if (event.type == sf::Event::MouseButtonPressed) {
                 for (int i = 0; i < button.size(); i++)
                 {
@@ -250,6 +255,12 @@ gameBackgroundSprite.setColor(sf::Color(160, 130, 100, 255));
                                 else
                                     return globalType::menuAction;
                             case 2:
+                                globalType::menuAction = displayBoardsSettings();
+                                if(globalType::menuAction == globalType::goBack)
+                                    break;
+                                else
+                                    return globalType::menuAction;
+                            case 3:
                                 return globalType::goBack;
                         }
                 }
@@ -275,7 +286,7 @@ gameBackgroundSprite.setColor(sf::Color(160, 130, 100, 255));
                 return globalType::quit;
             }
             if (event.type == sf::Event::MouseMoved)
-                updateMenuButtons(button);
+                updateMenuButtons(button, buttonScaleX, buttonScaleY);
             if (event.type == sf::Event::MouseButtonPressed) {
                 for (int i = 0; i < button.size(); i++)
                 {
@@ -289,7 +300,6 @@ gameBackgroundSprite.setColor(sf::Color(160, 130, 100, 255));
                         return globalType::goBack;
                     }
                 }
-                locateMenuButtons(button);
             }
         }
         drawMenu(button);
@@ -346,7 +356,7 @@ gameBackgroundSprite.setColor(sf::Color(160, 130, 100, 255));
                 return globalType::quit;
             }
             if (event.type == sf::Event::MouseMoved)
-                updateMenuButtons(button);
+                updateMenuButtons(button, buttonScaleX, buttonScaleY);
             if (event.type == sf::Event::MouseButtonPressed) {
                 for (int i = 0; i < button.size(); i++)
                 {
@@ -360,6 +370,58 @@ gameBackgroundSprite.setColor(sf::Color(160, 130, 100, 255));
         drawMenu(button, false, "Set window size.");
     }
 
+}
+            globalType::MenuAction Menu::displayBoardsSettings()
+{
+    std::vector<Button> button = {boardMiniature1, boardMiniature2, boardMiniature3, boardMiniature4};
+    locateBoardsSettingsButtons(button);
+    while (globalType::windowPtr->isOpen())
+    {
+        checkWindowSize();
+        sf::Event event;
+        while (globalType::windowPtr->pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+            {
+                globalType::windowPtr->close();
+                return globalType::quit;
+            }
+            if (event.type == sf::Event::MouseMoved)
+                updateMenuButtons(button, boardMiniatureButtonScale, boardMiniatureButtonScale);
+            if (event.type == sf::Event::MouseButtonPressed)
+            {
+                for (int i = 0; i < button.size(); i++)
+                {
+                    sf::FloatRect buttonBounds = buttonSprite[button[i]].getGlobalBounds();
+                    if (buttonBounds.contains(sf::Vector2f(event.mouseButton.x, event.mouseButton.y)))
+                    {
+                        globalType::numberOfBoardTexture = i + 1;
+                        globalType::writeConfigFile();
+                        loadBoardTextures();
+                        setBoardSprites();
+                        return globalType::goBack;
+                    }
+                }
+            }
+        }
+        drawMenu(button);
+    }
+}
+                void Menu::locateBoardsSettingsButtons(std::vector<Button> button)
+{
+    for (int i = 0; i < button.size(); i++)
+        buttonSprite[button[i]].setOrigin(100.0f, 100.0f);
+    float buttonSize  = globalType::windowHeight * 0.15f;
+    float buttonSpace =  globalType::windowHeight * 0.08f;
+    float allButtosWidth = 3.0f * buttonSize + 3.0f * buttonSpace;
+    float allButtosXPosition = globalType::windowWidth / 2.0f - allButtosWidth / 2.0f;
+    float buttonYPosition = globalType::windowHeight / 2.0f;
+    boardMiniatureButtonScale = buttonSize  / buttonTexture[whiteKnight].getSize().x;
+    for(int i=0; i < button.size(); i++)
+    {
+        buttonSprite[button[i]].setPosition(allButtosXPosition + i * (buttonSize + buttonSpace), buttonYPosition);
+        buttonSprite[button[i]].setScale(boardMiniatureButtonScale, boardMiniatureButtonScale);
+    }
 }
     globalType::MenuAction Menu::displayGameOverMenu(bool notation, globalType::GameResult gameResult)
 {
@@ -380,7 +442,7 @@ gameBackgroundSprite.setColor(sf::Color(160, 130, 100, 255));
                 return globalType::quit;
             }
             if (event.type == sf::Event::MouseMoved)
-                updateMenuButtons(button);
+                updateMenuButtons(button, buttonScaleX, buttonScaleY);
             if (event.type == sf::Event::MouseButtonPressed) {
                 for (int i = 0; i < button.size(); i++)
                 {
@@ -435,7 +497,7 @@ gameBackgroundSprite.setColor(sf::Color(160, 130, 100, 255));
                 return globalType::quit;
             }
             if (event.type == sf::Event::MouseMoved)
-                updateMenuButtons(button);
+                updateMenuButtons(button, buttonScaleX, buttonScaleY);
             if (event.type == sf::Event::MouseButtonPressed) {
                 for (int i = 0; i < button.size(); i++)
                 {
@@ -478,7 +540,7 @@ gameBackgroundSprite.setColor(sf::Color(160, 130, 100, 255));
                 return globalType::quit;
             }
             if (event.type == sf::Event::MouseMoved)
-                updateMenuButtons(button, true);
+                updateMenuButtons(button, promotionButtonScale, promotionButtonScale);
             if (event.type == sf::Event::MouseButtonPressed)
             {
                 for (int i = 0; i < button.size(); i++)
@@ -542,10 +604,8 @@ void Menu::locateMenuButtons(std::vector<Button> button)
         buttonSprite[notationSaved].setTexture(buttonTexture[notationSaved]);
     }
 }
-void Menu::updateMenuButtons(std::vector<Button> button, bool promotionMenu)
+void Menu::updateMenuButtons(std::vector<Button> button, float scaleX, float scaleY)
 {
-    float scaleX = promotionMenu? promotionButtonScale: buttonScaleX;
-    float scaleY = promotionMenu? promotionButtonScale: buttonScaleY;
     for (int i = 0; i < button.size(); i++)
     {
         if(button[i] == notationSaved && isNotationSaved)

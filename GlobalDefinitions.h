@@ -108,7 +108,6 @@ namespace globalType{
     extern float windowHeight;
 
     extern int numberOfButtonTexture;
-    extern int numberOfBackgroundTexture;
     extern int numberOfBoardTexture;
 
     extern Languages setLanguage;

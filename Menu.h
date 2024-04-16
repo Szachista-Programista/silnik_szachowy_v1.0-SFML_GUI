@@ -27,6 +27,7 @@ public://////////////////
         endRightArrow,
         setButtons,
         setWindowSize,
+        setBoardTexture,
         whiteKnight,
         whiteBishop,
         whiteRook,
@@ -35,6 +36,10 @@ public://////////////////
         blackBishop,
         blackRook,
         blackQueen,
+        boardMiniature1,
+        boardMiniature2,
+        boardMiniature3,
+        boardMiniature4,
         set1,
         set2,
         set3,
@@ -44,7 +49,7 @@ public://////////////////
     };
 
     enum Values{
-        buttonNumbers = 33
+        buttonNumbers = 38
     };
 
     bool color;
@@ -53,6 +58,7 @@ public://////////////////
     float buttonScaleX;
     float buttonScaleY;
     float promotionButtonScale;
+    float boardMiniatureButtonScale;
 
     sf::Texture gameBackgroundTexture;
     sf::Sprite  gameBackgroundSprite;
@@ -86,6 +92,8 @@ public://////////////////
         globalType::MenuAction displaySettingsMenu();
             globalType::MenuAction displayButtonSettings();
             globalType::MenuAction displayWindowSizeSettings();
+            globalType::MenuAction displayBoardsSettings();
+            void locateBoardsSettingsButtons(std::vector<Button> button);
     globalType::MenuAction displayGameOverMenu(bool notation, globalType::GameResult gameResult);
         std::string setNoteContent(globalType::GameResult gameResult);
     globalType::MenuAction displayGameMenu(bool notation);
@@ -94,7 +102,7 @@ public://////////////////
 
     void locateMenuButtons(std::vector<Button> button);
 
-    void updateMenuButtons(std::vector<Button> button, bool promotionMenu = false);
+    void updateMenuButtons(std::vector<Button> button, float scaleX, float scaleY);
 
     void drawMenu(std::vector<Button> button, bool gameBackground = false, std::string note = "");
         void drawNote(std::string note);
