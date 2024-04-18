@@ -1,6 +1,4 @@
-include_directories(  "D:/PROGRAMY/SFML/SFML/include")
-# link_directories(     "D:/PROGRAMY/SFML/SFML/lib")
-
+include_directories("C:/Path/to/the/SFML/include")
 
 cmake_minimum_required(VERSION 3.10)
 project(ChessEngine_SFML_Interface)
