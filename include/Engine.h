@@ -5,7 +5,7 @@
 /**
  * @brief The Engine class manages the entire game, handling opening,
  * middle game, and endgame moves.
- * 
+ *
  * This class contains an instance of the Move class and utilizes it
  * for generating moves. It orchestrates the entire game, starting with
  * opening moves and deciding when the opening phase ends. Once the opening

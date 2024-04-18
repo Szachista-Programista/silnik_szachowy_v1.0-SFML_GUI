@@ -1,4 +1,4 @@
-#include "GlobalDefinitions.h"
+#include "../include/GlobalDefinitions.h"
 
 namespace globalType{
     double(*userKingBehaviorPoints1)   (double,double);
@@ -32,7 +32,7 @@ namespace globalType{
 
     int numberOfButtonTexture;
     int numberOfBoardTexture;
-    
+
     Languages setLanguage;
     GameStage gameStage;
     KindOfEndgame choosenEndgame;
@@ -45,7 +45,7 @@ namespace globalType{
         std::string data;
         try
         {
-            reading.open("config.txt");
+            reading.open("resources/config.txt");
             if (!reading.is_open())
                 throw std::ifstream::failure("The file 'config.txt' cannot be opened .");
             if (!getline(reading, data))
@@ -68,7 +68,7 @@ namespace globalType{
         data += static_cast<char>(numberOfButtonTexture     + '0');
         data += static_cast<char>(numberOfBoardTexture      + '0');
 
-        std::ofstream file("config.txt");
+        std::ofstream file("resources/config.txt");
         try
         {
             if (!file.is_open())

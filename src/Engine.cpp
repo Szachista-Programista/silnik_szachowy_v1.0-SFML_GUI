@@ -1,4 +1,4 @@
-#include "Engine.h"
+#include "../include/Engine.h"
 
 Engine::Engine(bool k): color{k}, movement{k}
 {
@@ -24,7 +24,7 @@ Engine::Engine(bool k): color{k}, movement{k}
     }
     try
     {
-        reading.open("chessboard.txt");
+        reading.open("resources/chessboard.txt");
         if (!reading.is_open())
             throw std::ifstream::failure("The file 'chessboard.txt' cannot be opened .");
 
@@ -922,3 +922,4 @@ int Engine::makeMove                         (int userMoveCode)
         return 400000;
     return 0;
 }
+

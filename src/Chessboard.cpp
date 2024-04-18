@@ -1,4 +1,4 @@
-#include "Chessboard.h"
+#include "../include/Chessboard.h"
 
 Chessboard::Chessboard(bool k): color{k}
 {
@@ -176,7 +176,7 @@ Chessboard::Chessboard(bool k): color{k}
     }
     try
     {
-        reading.open("chessboard.txt");
+        reading.open("resources/chessboard.txt");
         if (!reading.is_open())
             throw std::ifstream::failure("The file 'chessboard.txt' cannot be opened .");
 
@@ -637,3 +637,4 @@ bool Chessboard::displayPastMovements(int numberOfMove, bool afterGame)
             return false;
     }
 }
+

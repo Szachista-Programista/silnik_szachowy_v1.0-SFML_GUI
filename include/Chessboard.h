@@ -107,3 +107,4 @@ public: ~Chessboard();
 public: bool displayPastMovements(int NumberOfMove, bool afterGame);
 };
 #endif//CHESSBOARD_H
+

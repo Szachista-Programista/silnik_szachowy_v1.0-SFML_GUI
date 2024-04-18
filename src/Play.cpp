@@ -1,4 +1,4 @@
-#include "Play.h"
+#include "../include/Play.h"
 
 Play::Play(bool k)noexcept:
 color{k}, chessboard{k}, engine{k}, notebook{k}, menu{k}

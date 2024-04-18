@@ -1,4 +1,4 @@
-#include "Notebook.h"
+#include "../include/Notebook.h"
 
 Notebook::Notebook(bool k): color{k}
 {
@@ -22,7 +22,7 @@ Notebook::Notebook(bool k): color{k}
     }
     try
     {
-        reading.open("chessboard.txt");
+        reading.open("resources/chessboard.txt");
         if (!reading.is_open())
             throw std::ifstream::failure("The file 'chessboard.txt' cannot be opened .");
 
@@ -519,3 +519,4 @@ std::string Notebook::getChessboardUpdateCode()noexcept
                 previousChessboard[i][j] = currentChessboard[i][j];
             }
 }
+

@@ -68,3 +68,4 @@ public: std::string getChessboardUpdateCode()noexcept;
 private:    void generateChessboardUpdateCode()noexcept;
 };
 #endif//NOTEBOOK_H
+

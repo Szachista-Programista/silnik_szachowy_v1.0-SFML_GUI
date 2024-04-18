@@ -98,7 +98,7 @@ namespace globalType{
         rook,
         queen
     } extern menuAction;
-    
+
     using chessboardPointer = char(*)[8];
     using chessboardUnderlightPointer = bool(*)[8];
     struct errorType{std::string errorMessage;};
@@ -120,3 +120,5 @@ namespace globalType{
     void writeConfigFile();
 }
 #endif//GLOBAL_DEFINITIONS_H
+
+

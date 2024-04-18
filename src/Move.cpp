@@ -1,4 +1,4 @@
-#include "Move.h"
+#include "../include/Move.h"
 
 Move::Move(bool k)noexcept: color{k}
 {
@@ -1337,3 +1337,4 @@ void Move::writeChessboard                                                      
     std::cout<<std::string(3 ,'\333')<<" 0 1 2 3 4 5 6 7 "<<std::string(3 ,'\333')<<std::endl;
     std::cout<<std::string(23,'\333')<<std::endl;
 }
+

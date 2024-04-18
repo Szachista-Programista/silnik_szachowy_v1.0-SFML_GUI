@@ -1,4 +1,4 @@
-#include "Menu.h"
+#include "../include/Menu.h"
 
 Menu::Menu(bool k): color{k}
 {
@@ -656,5 +656,6 @@ void Menu::drawOverlay()
     overlay.setFillColor(sf::Color(160, 130, 100, 150));
     globalType::windowPtr->draw(overlay);
 }
+
 
 
