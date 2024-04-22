@@ -1,0 +1,18 @@
+# *.gitignore
+# *.cbp
+
+
+bin/
+obj/
+saved notations/*.txt
+!saved notations
+
+*.depend
+*.layout
+*.cscope_file_list
+*.out
+*.vscode
+*.dll
+
+
+
