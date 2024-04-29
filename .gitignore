@@ -1,6 +1,6 @@
 # *.gitignore
 # *.cbp
-
+# *.dll
 
 bin/
 obj/
@@ -12,7 +12,7 @@ saved notations/*.txt
 *.cscope_file_list
 *.out
 *.vscode
-*.dll
+
 
 
 
